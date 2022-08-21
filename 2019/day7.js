@@ -178,15 +178,50 @@ function solvepart2v2(){
 }
 
 function solvePart2v3(){
-	let intcodes;
-	
+	let intcodes,activeOperator;
+
 	const allPermutations = permutator([5,6,7,8,9]);
+	// const computers 
 
 	for (let permutation of [allPermutations[0]]){
 			intcodes=[[...currentIntCode],[...currentIntCode],[...currentIntCode],[...currentIntCode],[...currentIntCode]]
 			directives=[...permutation];
 		console.log(permutation)
 	}
+
+	function Computer(intcode){
+		if (!(this instanceof Computer)){
+			return new Computer();
+		}
+		this.intcode = [...intcode];
+		this.directive = directive;
+		this.currentIndex = 0;
+
+		this.reset= function () {
+			this=new Computer();
+		}
+	}
 }
 // solvepart1();
-solvePart2v3();
+// solvePart2v3();
+
+function Computer(intcode,directive){
+	if (!(this instanceof Computer)){
+		return new Computer();
+	}
+	this.intcode = [...intcode];
+	this.directive = directive;
+	this.currentIndex = 0;
+
+	this.reset= function () {
+		this=new Computer();
+	}
+}
+
+let c = new Computer([1,2],3);
+c.currentIndex++;
+c.currentIndex++;
+c.currentIndex++;
+console.log(c.currentIndex);
+c.reset();
+console.log(c.currentIndex);
