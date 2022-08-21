@@ -10,6 +10,7 @@ const parameterMap=new Map([
 	[`99`,0]
 ]);
 
+
 export default function operator(arrayToUse,cIndex,inputMemory,outputMemory){
 	
 	const operatorCode = String(arrayToUse[cIndex]).slice(-2);
@@ -28,18 +29,16 @@ export default function operator(arrayToUse,cIndex,inputMemory,outputMemory){
 				return cIndex+parameterMap.get(`1`)+1;	
 			case `2`:
 			case `02`:
-				arrayToUse[param3]=arrayToUse[param1]*arrayToUse[param2];	
+				arrayToUse[param3]=arrayToUse[param1]*arrayToUse[param2];
 				return cIndex+parameterMap.get(`2`)+1;
 			case `3`:
 			case `03`:		
 				let input=inputMemory.shift();			
 				arrayToUse[param1]=input;
-				// console.log(input)
 				return cIndex+parameterMap.get(`3`)+1;
 			case `4`:
 			case `04`:
-				outputMemory.splice(1,0,arrayToUse[param1]);	
-				// console.log(arrayToUse[param1])	
+				outputMemory.splice(1,0,arrayToUse[param1]);
 				return cIndex+parameterMap.get(`4`)+1;
 			case `5`:
 			case `05`:
