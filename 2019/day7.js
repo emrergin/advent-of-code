@@ -100,3 +100,4 @@ function solvePart2(){
 	}
 }
 
+solvePart1()

@@ -4,6 +4,7 @@
 ### What I learned
 - `Number.MIN_SAFE_INTEGER` can be used as a starting point for finding maximum of a set, instead of `-Infinity`.
 - `Array.fill` passes the objects with reference.
+    - See: https://stackoverflow.com/questions/35578478/array-prototype-fill-with-object-passes-reference-and-not-new-instance
 
 ### Influences
 - I had to skim through solutions of others once, in Day 7, Part 2, 2019. While doing so, I found the following repo really useful: https://github.com/romellem/advent-of-code.
