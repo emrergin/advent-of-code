@@ -5,7 +5,7 @@ const IntCode = [3,8,1005,8,335,1106,0,11,0,0,0,104,1,104,0,3,8,1002,8,-1,10,100
 let relativeBase = [0];
 
 
-const robotInput=[0];
+const robotInput=[1];
 const robotOutput=[];
 
 const allTiles=[];
@@ -16,10 +16,6 @@ function Tile(x,y){
     this.color=0;
     allTiles.push(this);
 }
-
-
-
-
 
 let currentLocation = {x:0,y:0};
 let directions = [{x:0,y:-1},{x:1,y:0},{x:0,y:1},{x:-1,y:0}]
@@ -67,10 +63,36 @@ function operatorCaller(arrayToUse,inputMemory,outputMemory,relativeBaseM){
     }
 }
 
+function painter(tiles){
+    let limits = tiles.reduce((prev,curr)=> 
+    {
+        if (curr.x<prev.minX){prev.minX=curr.x}
+        if (curr.y<prev.minY){prev.minY=curr.y}
+        if (curr.x>prev.maxX){prev.maxX=curr.x}
+        if (curr.y>prev.maxY){prev.maxY=curr.y}
+
+        return prev;
+    },{minX:Infinity,minY:Infinity,maxX:-Infinity,maxY:-Infinity})
+
+    console.log(limits)
+
+    for(let j=limits.minY;j<=limits.maxY;j++){    
+        let currentRow='';
+        for (let i=limits.minX;i<=limits.maxX;i++){
+            if (tiles.filter(a=>a.x===i&&a.y===j).length>0){
+                let addedChar = tiles.filter(a=>a.x===i&&a.y===j)[0].color===0 ? `⬜` : '⬛';
+                currentRow+=addedChar;
+            }
+            else{
+                currentRow+='⬜';
+            }            
+        }
+        console.log(currentRow);
+    }
+}
 
 
 
 
 operatorCaller(IntCode,robotInput,robotOutput,relativeBase);
-console.log(allTiles.filter(a=>a.painted>0).length)
-// console.log(allTiles)
+painter(allTiles);
