@@ -7,7 +7,7 @@ let relativeBase = [0];
 
 const robotInput=[1];
 const robotOutput=[];
-
+//PART1========================================================
 const allTiles=[];
 function Tile(x,y){
     this.x=x;
@@ -18,7 +18,7 @@ function Tile(x,y){
 }
 
 let currentLocation = {x:0,y:0};
-let directions = [{x:0,y:-1},{x:1,y:0},{x:0,y:1},{x:-1,y:0}]
+let directions = [{dx:0,dy:-1},{dx:1,dy:0},{dx:0,dy:1},{dx:-1,dy:0}]
 let currentDirection = 0;
 
 function operatorCaller(arrayToUse,inputMemory,outputMemory,relativeBaseM){
@@ -55,14 +55,14 @@ function operatorCaller(arrayToUse,inputMemory,outputMemory,relativeBaseM){
             currentDirection+=1;
             currentDirection = currentDirection%4;
         }
-        currentLocation.x+=directions[currentDirection].x;
-        currentLocation.y+=directions[currentDirection].y;
+        currentLocation.x+=directions[currentDirection].dx;
+        currentLocation.y+=directions[currentDirection].dy;
         
 
         return currentDirection;
     }
 }
-
+//PART2========================================================
 function painter(tiles){
     let limits = tiles.reduce((prev,curr)=> 
     {
@@ -73,8 +73,6 @@ function painter(tiles){
 
         return prev;
     },{minX:Infinity,minY:Infinity,maxX:-Infinity,maxY:-Infinity})
-
-    console.log(limits)
 
     for(let j=limits.minY;j<=limits.maxY;j++){    
         let currentRow='';
@@ -90,8 +88,6 @@ function painter(tiles){
         console.log(currentRow);
     }
 }
-
-
 
 
 operatorCaller(IntCode,robotInput,robotOutput,relativeBase);
