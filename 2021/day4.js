@@ -12,12 +12,12 @@ let boards = readFileSync(`day4_boards.txt`, 'utf-8')
 
 const scores = Array(boards.length).fill(``).map(()=>({v:Array(boards[0].length).fill(0),h:Array(boards[0].length).fill(0)}));
 
-loop1:for(let num of numbersInOrder){
+for(let num of numbersInOrder){
     for(let i=0;i<boards.length;i++){
-        loop2:for(let j=0;j<boards[0].length;j++){
+        loop:for(let j=0;j<boards[0].length;j++){
             for(let k=0;k<boards[0][0].length;k++){
                 if(Math.max(...scores[i].v)===boards[0].length || Math.max(...scores[i].h)===boards[0][0].length){
-                    continue loop2;
+                    continue loop;
                 }
                 if(boards[i][j][k]===num){
 
@@ -30,7 +30,7 @@ loop1:for(let num of numbersInOrder){
                                                         .reduce((prev,curr)=>prev+curr,0);
                         console.log(num*sumOfUnmarked)
                     }
-                    continue loop2;
+                    continue loop;
                 }
             }
         }
