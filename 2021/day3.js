@@ -13,30 +13,16 @@ let test = [
 "11001",
 "00010",
 "01010"
-]
+];
 
-function powerConsumption(){
+function powerConsumption(arrayToUse){
     // Related Links
     // https://stackoverflow.com/questions/35578478/array-prototype-fill-with-object-passes-reference-and-not-new-instance
-    let resultArray = Array(12).fill().map(a=>(Object.assign({}, {zeros:0,ones:0})))
 
-    let parsedInput=day3input.map(a=>a.split("")).reduce(
-        (prev,thisNumberArray)=>{
-            thisNumberArray.forEach((value,index) =>{
-                if (value===`1`){
-                    prev[index].ones++;
-                }else{
-                    prev[index].zeros++;
-                }   
-            }
-            )
-            return prev
-        }
-        ,resultArray
-    )
+    let parsedInput=parseOnesZeros(arrayToUse.map(a=>a.split("")),1);
 
-    const gamma = parseInt(parsedInput.map(a=> a.zeros>a.ones ? 0 : 1).join(''),2)
-    const epsilon =  parseInt(parsedInput.map(a=> a.zeros>a.ones ? 1 : 0).join(''),2)
+    const gamma = parseInt(parsedInput.join(''),2)
+    const epsilon =  parseInt(parsedInput.map(a=>a===`1`?0:1).join(''),2)
 
     console.log(gamma*epsilon)
 }
@@ -66,7 +52,6 @@ function parseOnesZeros(arr,priority=0){
 }
 
 function lifeSupport(arrayToUse){
-    // let arrayToUse = arrayToUse.map(a=>a.split(""))
     let parsedInput=arrayToUse.map(a=>a.split(""));    
     
     function O2(input){        
@@ -93,4 +78,3 @@ function lifeSupport(arrayToUse){
 
     console.log(O2([...parsedInput])*CO2([...parsedInput]))
 }
-lifeSupport(day3input);
