@@ -48,20 +48,10 @@ function findEnergies(moons){
     }
 }
 function resolveCycles(k,moons){
-    // let cycles=[null,null,null,null]
     let cycles=[null,null,null];
     for( let steps=0;steps<k;steps++){
         findGravities(moons);
         resolveMovement(moons);
-        // for(let i=0;i<4;i++){
-        //     if (moons[i].vel.x===0 && moons[i].vel.y===0 && moons[i].vel.z===0 && moons[i].cycleLength===undefined
-        //         &&  moons[i].x===moons[i].initial.x && moons[i].y===moons[i].initial.y && moons[i].z===moons[i].initial.z){
-        //         moons[i].cycleLength=steps+1;
-        //     }
-        // }
-        // if (moons.filter(moon=>moon.cycleLength===undefined).length===0){
-        //     break;
-        // }
         if(moons[0].x===moons[0].initial.x && moons[1].x===moons[1].initial.x &&  moons[2].x===moons[2].initial.x  && moons[3].x===moons[3].initial.x && cycles[0]===null){
             cycles[0]=steps+1;
             console.log(cycles);
@@ -79,9 +69,6 @@ function resolveCycles(k,moons){
         
     }
     console.log(moons)
-    // console.log(moons.map(a=>a.cycleLength).reduce((prev,curr)=>lcm_two_numbers(prev,curr),1));
-    // console.log(cycles.reduce((prev,curr)=>lcm_two_numbers(prev,curr),1));
-    // console.log(cycles)
 }
 
 resolveCycles(Infinity,jupitersMoons3);

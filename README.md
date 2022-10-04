@@ -9,4 +9,4 @@
 
 ### Influences
 - I had to skim through solutions of others once, in Day 7, Part 2, 2019. While doing so, I found the following repo really useful: https://github.com/romellem/advent-of-code.
-- [Brian Bucklew](https://twitter.com/unormal) was the one that suggests me to check this website out. He also nudged me to the correct direction more than once.
+- [Brian Bucklew](https://twitter.com/unormal) was the one that suggested me to check this website out. He also nudged me to the correct direction more than once.
