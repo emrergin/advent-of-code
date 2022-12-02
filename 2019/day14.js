@@ -15,51 +15,32 @@ let lines = readFileSync(`day14test1.txt`, 'utf-8')
                     },{input:[],output:[]})
                 );
 
-const hasPathToOre = new Map();
-// const leftOverInputs = new Map();
-
-function calculatenewPaths(){
-    for(let line of lines){
-        if(line.input.every(i=>i[1]==="ORE")){
-            line.lowestOreCost=line.input.reduce((acc,curr)=>acc+curr[0],0);
-            hasPathToOre.set(line.output[1],line);
-        }
-    }
-}
-
-function cleanUp(){
-    lines.map(a=>a.input.reduce((acc,curr)=>
-    {
-        const prev = acc.findIndex(a=>a[1]===curr[1]);
-        if (prev!==-1){acc[prev][0]+=curr[0];}
-        else{acc.push(curr);}
-        return acc;
-    },[]))
-}
-
-// console.log(hasPathToOre);
-
-function reduceIntoOres(){
-    for(let line of lines){
-        for(let i=0;i<line.input.length;i++){
-            if (hasPathToOre.get((line.input[i])[1])){
-                const amountProducedInOneGo = hasPathToOre.get((line.input[i])[1]).output[0];
-                const amountNeededToBeProduced = line.input[i][0];
-                const productionCycles = Math.ceil(amountNeededToBeProduced/amountProducedInOneGo);
-                line.input[i]=[productionCycles*hasPathToOre.get((line.input[i])[1]).lowestOreCost,"ORE"];
+function findInputs(element){
+    let finalInput = lines.find(a=>a.output[1]===element).input;
+    
+    while(finalInput.filter(a=>a[0]>0).length>1){ 
+        const currentLength = finalInput.length;
+        for(let i=0; i<currentLength;i++){
+            console.log(finalInput);
+            
+            if(finalInput[i][1]!=="ORE"&&finalInput[i][0]>0){
+                const relatedProcess = lines.find(a=>a.output[1]===finalInput[i][1]);
+                finalInput[i][0]-=relatedProcess.output[0];
+                finalInput = finalInput.concat(relatedProcess.input);
+                finalInput= finalInput.reduce((acc,curr)=>{
+                    let cellToAdd=acc.findIndex(a=>a[1]===curr[1]);
+                    if(cellToAdd!==-1){acc[cellToAdd][0]+=curr[0];}
+                    else{acc.push(curr);}
+                    return acc;
+                },[])
+                finalInput=finalInput.filter(a=>a[0]!==0);
             }
         }
-    }
+        // is++;
+        // console.log(finalInput);
+       }
+
+    console.log(finalInput)
 }
 
-// console.log(lines[lines.length-1]);
-// console.log(lines.find(a=>a.output[1]==="FUEL").input.every(i=>i[1]==="ORE"));
-
-while(!(lines.find(a=>a.output[1]==="FUEL").input.every(i=>i[1]==="ORE"))){
-    calculatenewPaths();
-    reduceIntoOres();
-    console.log(hasPathToOre);
-    // cleanUp();
-}
-
-console.log(lines.find(a=>a.output[1]==="FUEL"));
+findInputs("FUEL");
