@@ -3,8 +3,6 @@ import {readFileSync } from "fs";
 let lines = readFileSync(`day3input.txt`, 'utf-8')
                 .split(`\n`);
 
-
-
 function findCommonType(com1,com2,com3){
     let filteredArray;
     if (arguments[2]===undefined){
@@ -45,5 +43,5 @@ function partTwo(){
     console.log(totalPriorityOfBadges);
 }
 
-// partOne();
+partOne();
 partTwo();

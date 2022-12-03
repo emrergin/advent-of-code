@@ -1,94 +1,118 @@
 import {readFileSync } from "fs";
 
-let lines = readFileSync(`day14test3.txt`, 'utf-8')
+const processes = new Map();
+readFileSync(`day14input.txt`, 'utf-8')
                 .split(`\n`).map(a=>a.split('=>'))
-                .map(a=>a.flatMap(b=>b.trim().split(',')))
-                .map(a=>a.map(b=>b.trim().split(" "))
-                    .reduce((acc,curr, currentIndex, array)=>{
-                        if(currentIndex<array.length-1){
-                            acc.input.push([+curr[0],curr[1]])
-                        }
-                        else{
-                            acc.output=[+curr[0],curr[1]]
-                        }
-                        return acc;
-                    },{input:[],output:[]})
-                );
+                .map(a=>a.map(b=>b.trim().split(',')))
+                .forEach(a=>{
+                    const inputMap = new Map();
+                    const [qty,item] = a[1][0].split(" ");
+                    a[0].map(b=>b.trim().split(",").map(c=>c.split(" ")).forEach(d=>inputMap.set(d[1],+d[0])));
+                    processes.set(item, {qty:+qty, inputs: inputMap})
+                })
 
-function cleanUp(arrayOfInputs){
-    return arrayOfInputs.reduce((acc,curr)=>{
-        let cellToAdd=acc.findIndex(a=>a[1]===curr[1]);
-        if(cellToAdd!==-1){acc[cellToAdd][0]+=curr[0];}
-        else{acc.push(curr);}
-        return acc;
-    },[]);
+function convertOutputIntoInputs(output,needs,present){
+    const neededAmount = needs.get(output);
+    const presentAmount = present.get(output);
+    const producedInOneGo = processes.get(output).qty;
+
+    if (presentAmount>=neededAmount){
+        needs.set(output,0);
+        present.set(output,presentAmount-neededAmount);
+    }
+    else{
+        const notExisting = neededAmount-presentAmount;
+        const numberOfCycles = Math.ceil(notExisting/producedInOneGo);
+        needs.set(output,0);
+        present.set(output,(numberOfCycles*producedInOneGo)-notExisting);
+        processes.get(output).inputs.forEach((v,k)=>needs.set(k,needs.get(k)+(v*numberOfCycles)));
+    }
 }
 
-function produceOneFuel(currentInput){
-    while(currentInput.filter(a=>a[0]>0).length>1){ 
-        for(let i=0; i<currentInput.length;i++){
-            
-            if(currentInput[i][1]!=="ORE"&&currentInput[i][0]>0){
-                const relatedProcess = structuredClone(lines.find(a=>a.output[1]===currentInput[i][1]));
-                currentInput[i][0]-=relatedProcess.output[0];
-                currentInput = currentInput.concat(relatedProcess.input);
-                currentInput= cleanUp(currentInput); 
-                currentInput=currentInput.filter(a=>a[0]!==0);
-            }
+function productionLoop(needs,present){
+    let willBeBroken = true;
+    needs.forEach((v,k)=>{
+        if(k!=="ORE" && needs.get(k)>0){
+            convertOutputIntoInputs(k,needs,present);
+            willBeBroken=false;
         }
-    }
-    return currentInput;
-}
-// Not complete yet.
-function produceFuel(currentInput){
-    while(currentInput.filter(a=>a[0]>0).length>1){ 
-        for(let i=0; i<currentInput.length;i++){
-            if(currentInput[i][1]!=="ORE"&&currentInput[i][0]>0){
-                const relatedProcess = structuredClone(lines.find(a=>a.output[1]===currentInput[i][1]));
-                const timesToProcess = Math.max(Math.ceil(relatedProcess.output[0]/currentInput[i][0]),1);
-                currentInput[i][0]-=(timesToProcess*relatedProcess.output[0]);
-                currentInput = currentInput.concat(relatedProcess.input.map(a=>[a[0]*timesToProcess,a[1]]));
-                currentInput= cleanUp(currentInput); 
-                currentInput=currentInput.filter(a=>a[0]!==0);
-            }
+        if(needs.get(k)<0){
+            present.set(needs.get(k));
+            needs.set(k,0)
         }
-    }
-    return currentInput;
+    })
+    return willBeBroken;
 }
 
 function partOne(){
-    let finalInput = structuredClone(lines.find(a=>a.output[1]==="FUEL").input);
-    finalInput=produceOneFuel(finalInput);
-    console.log(finalInput);
-}
+    const needs = new Map();
+    const present = new Map();
+    processes.forEach((v,k)=>{
+        needs.set(k,0);
+        present.set(k,0);
+    });
+    needs.set("ORE",0);
+    present.set("ORE",0);
+    needs.set("FUEL",1);
 
-function partOnePrime(){
-    let finalInput = structuredClone(lines.find(a=>a.output[1]==="FUEL").input);
-    finalInput=produceFuel(finalInput);
-    console.log(finalInput);
-}
+    convertOutputIntoInputs("FUEL",needs,present);
 
-function partTwo(){
-    let finalInput = structuredClone(lines.find(a=>a.output[1]==="FUEL").input);
-    let currentFuel=0;
-    
-    while(true){        
-        finalInput=produceFuel(finalInput);
-        const newFuelToAdd=structuredClone(lines.find(a=>a.output[1]==="FUEL").input);
-        finalInput = finalInput.concat(newFuelToAdd);
-        currentFuel++;
-        finalInput= cleanUp(finalInput); 
-        if(finalInput.find(a=>a[1]==="ORE")&& finalInput.find(a=>a[1]==="ORE")[0]>1000000000000){break;}
-        if(finalInput.length===1){break;}
-        if(currentFuel%1000===0){console.log(currentFuel)}
+    while (true){
+        const toBeBroken = productionLoop(needs,present);
+        if (toBeBroken){break;}
     }
 
-    console.log(currentFuel-1,finalInput);
+    console.log(needs.get("ORE"));
 }
 
+function produceFuel(num){
+    const needs = new Map();
+    const present = new Map();
+    processes.forEach((v,k)=>{
+        needs.set(k,0);
+        present.set(k,0);
+    });
+    needs.set("ORE",0);
+    present.set("ORE",0);
+    needs.set("FUEL",num);
+    convertOutputIntoInputs("FUEL",needs,present);
+    while (true){
+        const toBeBroken = productionLoop(needs,present);
+        if (toBeBroken){break;}
+    }
+    return needs.get("ORE");
+}
 
-// function addNewFuelToProduce()
-partOne();
-partOnePrime();
-// partTwo();
-// findInputs("FUEL");
+function partTwo(startingFuel){
+    let currentValue = startingFuel;
+    let diff = startingFuel/2;
+    let upper=2*currentValue,lower=0;
+    let lastChange,thisChange;
+    while(true){
+        if(produceFuel(currentValue)>1000000000000){
+            upper=currentValue;
+            currentValue=Math.round(currentValue-diff);
+            thisChange=-1;
+        }
+        else{
+            lower=Math.max(currentValue,lower);
+            currentValue=Math.round(currentValue+diff);
+            thisChange=1
+        }
+        if (lastChange===thisChange){
+            diff=2*diff;
+        }
+        else{
+            diff=diff/2;
+        }
+        lastChange=thisChange;
+        if(upper===lower+1){
+            break;
+        }
+        
+    }
+    console.log(lower);
+}
+
+let startingFuel=13000000;
+partTwo(startingFuel);
