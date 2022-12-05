@@ -8,7 +8,6 @@ function checkLine1(line){
 }
 
 function checkLine2(line){
-
     return (line[2]<=line[1]&&line[0]<=line[3])||(line[0]<=line[3]&&line[2]<=line[1]);
 }
 
