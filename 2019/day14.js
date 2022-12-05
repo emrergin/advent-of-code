@@ -83,36 +83,28 @@ function produceFuel(num){
     return needs.get("ORE");
 }
 
-function partTwo(startingFuel){
-    let currentValue = startingFuel;
-    let diff = startingFuel/2;
-    let upper=2*currentValue,lower=0;
-    let lastChange,thisChange;
-    while(true){
-        if(produceFuel(currentValue)>1000000000000){
-            upper=currentValue;
-            currentValue=Math.round(currentValue-diff);
-            thisChange=-1;
-        }
-        else{
-            lower=Math.max(currentValue,lower);
-            currentValue=Math.round(currentValue+diff);
-            thisChange=1
-        }
-        if (lastChange===thisChange){
-            diff=2*diff;
-        }
-        else{
-            diff=diff/2;
-        }
-        lastChange=thisChange;
-        if(upper===lower+1){
+function partTwo(target){
+    let lower = 0;
+    let upper = target;
+    let currentValue;
+
+    while(lower<=upper){
+        currentValue = Math.floor((upper+lower)/2);
+        const withinBounds = produceFuel(currentValue)<=target;
+        if (withinBounds && produceFuel(currentValue+1)>target){
+            console.log(currentValue);
             break;
         }
-        
+        else if(withinBounds){
+            lower=currentValue+1;
+        }
+        else{
+            upper=currentValue-1;
+        }
     }
-    console.log(lower);
 }
 
-let startingFuel=13000000;
-partTwo(startingFuel);
+partTwo(1000000000000);
+
+
+
