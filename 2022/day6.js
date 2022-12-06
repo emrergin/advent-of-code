@@ -1,6 +1,6 @@
 import {readFileSync } from "fs";
 
-let letters = readFileSync(`day6input.txt`, 'utf-8').split("");
+const letters = readFileSync(`day6input.txt`, 'utf-8').split("");
 
 function partOne(){    
     for(let i=0;i<letters.length;i++){

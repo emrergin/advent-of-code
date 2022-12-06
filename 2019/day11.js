@@ -9,12 +9,14 @@ const robotInput=[1];
 const robotOutput=[];
 //PART1========================================================
 const allTiles=[];
-function Tile(x,y){
-    this.x=x;
-    this.y=y;
-    this.painted=0;
-    this.color=0;
-    allTiles.push(this);
+class Tile {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.painted = 0;
+        this.color = 0;
+        allTiles.push(this);
+    }
 }
 
 let currentLocation = {x:0,y:0};
