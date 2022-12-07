@@ -20,7 +20,7 @@ const IntCode6 = [3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,100
 
 let maxAmp = Number.MIN_SAFE_INTEGER;
 let win;
-let currentIntCode=IntCode;
+let currentIntCode=IntCode5;
 
 function solvePart1(){
 	const allPermutations = permutator([0,1,2,3,4]);
@@ -89,7 +89,7 @@ function solvePart2(){
 			return new Computer();
 		}
 		this.intcode = [...intcode];
-		this.defaultIntcode = [...intcode];
+		// this.defaultIntcode = [...intcode];
 		this.memory = [directive];
 		this.output = [];
 		this.currentIndex = 0;
@@ -100,4 +100,4 @@ function solvePart2(){
 	}
 }
 
-solvePart1()
+solvePart2()
