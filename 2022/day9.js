@@ -18,7 +18,7 @@ function moveHead(command,visited,head){
                 head.x+=1;
                 break;
             default:
-                    break;
+                break;
         }
         moveTail(visited,head,head.next);
         amount--;
