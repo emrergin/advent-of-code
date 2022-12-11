@@ -2,7 +2,7 @@ import {readFileSync } from "fs";
 const commands = readFileSync(`day10input.txt`, 'utf-8')
     .split("\n")
     .map(a=>a.split(" "))
-    .map(a=>[a[0],a[1]? +a[1]:null])
+    .map(a=>[a[0],a[1]? +a[1]:null]);
 
 const xCommands = commands.reduce((acc,curr)=>{
     acc.push(0);
