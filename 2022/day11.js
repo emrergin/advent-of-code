@@ -20,8 +20,7 @@ class Monkey{
         this.tru=tru;
         this.fal=fal;
         this.test=a=>a%test===0;
-        let str=op;
-        this.op=new Function('old', str);
+        this.op=new Function('old', op);
         this.totalInspections=0;
         this.decreaseWorry=part===1?(a)=>Math.floor(a/3):a=>a%lcm;
     }
@@ -54,8 +53,7 @@ function partOne(){
     
     for(let j=0;j<20;j++){
         for(let i=0;i<monkeys.length;i++){
-            monkeys[i].inspectTillEnd()
-    
+            monkeys[i].inspectTillEnd();    
         }
     }
     
@@ -72,9 +70,9 @@ function partTwo(){
     for(let j=0;j<10000;j++){
         for(let i=0;i<monkeys.length;i++){
             monkeys[i].inspectTillEnd(); 
-        }
-      
+        }      
     }
+    
     const allMonkeysOrdered = monkeys.map(a=>a.totalInspections).sort((a,b)=>b-a);
     console.log(allMonkeysOrdered[0]*allMonkeysOrdered[1]);
 }
