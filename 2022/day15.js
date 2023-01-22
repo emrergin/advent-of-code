@@ -68,7 +68,7 @@ function partTwo(){
                 continue outerloop;                 
             }
         }
-        console.log(currentPoint.y+(currentPoint.x)*4000000)
+        console.log(currentPoint.y+(currentPoint.x)*4000000);
     }
 }
 
