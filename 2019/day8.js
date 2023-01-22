@@ -3,38 +3,38 @@ const input = `22122121222022222102222022222022202202222022222222022202122222222
 let layers = input.match(/.{1,150}/g);
 
 function solvePart1(layers) {
-  const relatedLayerForPart1 = layers.reduce((prev, curr) =>
-    (prev.match(/0/g) || []).length > (curr.match(/0/g) || []).length
-      ? curr
-      : prev
-  );
-  const numberOfOnes = relatedLayerForPart1.match(/1/g).length;
-  const numberOfTwos = relatedLayerForPart1.match(/2/g).length;
-  console.log(numberOfOnes * numberOfTwos);
+    const relatedLayerForPart1 = layers.reduce((prev, curr) =>
+        (prev.match(/0/g) || []).length > (curr.match(/0/g) || []).length
+            ? curr
+            : prev
+    );
+    const numberOfOnes = relatedLayerForPart1.match(/1/g).length;
+    const numberOfTwos = relatedLayerForPart1.match(/2/g).length;
+    console.log(numberOfOnes * numberOfTwos);
 }
 
 function solvePart2(layers) {
-  layers = layers.map((a) => a.split(""));
-  const result = Array(150);
+    layers = layers.map((a) => a.split(""));
+    const result = Array(150);
 
-  for (let col = 0; col < 150; col++) {
-    for (let lay = 99; lay > -1; lay--) {
-      if (layers[lay][col] !== `2`) {
-        result[col] = layers[lay][col];
-        if (result[col] === `1`) {
-          result[col] = `⬜`;
-        } else {
-          result[col] = "⬛";
+    for (let col = 0; col < 150; col++) {
+        for (let lay = 99; lay > -1; lay--) {
+            if (layers[lay][col] !== `2`) {
+                result[col] = layers[lay][col];
+                if (result[col] === `1`) {
+                    result[col] = `⬜`;
+                } else {
+                    result[col] = "⬛";
+                }
+            }
         }
-      }
     }
-  }
 
-  for (let row = 0; row < 6; row++) {
-    let rowText = "";
-    for (let col = 0; col < 25; col++) {
-      rowText = rowText.concat(result[row * 25 + col]);
+    for (let row = 0; row < 6; row++) {
+        let rowText = "";
+        for (let col = 0; col < 25; col++) {
+            rowText = rowText.concat(result[row * 25 + col]);
+        }
+        console.log(rowText);
     }
-    console.log(rowText);
-  }
 }
