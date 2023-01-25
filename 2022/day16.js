@@ -1,3 +1,4 @@
+import { time } from "console";
 import { readFileSync } from "fs";
 
 function prepareData(filename) {
@@ -74,7 +75,7 @@ function prepareData(filename) {
         vertices[i] = {
             self: vertices[i][0],
             rate: vertices[i][1],
-            incomingPerson: false
+            // incomingPerson: false,
         };
     }
     let zeroVertices = vertices.filter((a) => a.rate === 0).map((a) => a.self);
@@ -94,13 +95,11 @@ function prepareData(filename) {
         return activeVertices;
     }
 
-
     return [vertices, getAllSubsets(nonZeroVertices), allPairShortestPaths];
 }
 
-const [vertices, allSubsets, allPairShortestPaths] = prepareData(`day16input.txt`);
-// const [vertices, allSubsets, allPairShortestPaths] =
-//     prepareData(`day16test.txt`);
+// const [vertices, allSubsets, allPairShortestPaths] = prepareData(`day16input.txt`);
+const [vertices, allSubsets, allPairShortestPaths] = prepareData(`day16test.txt`);
 
 function partOne() {
     function calculateValueForState(time, subset, location) {
@@ -129,9 +128,10 @@ function partOne() {
     console.log(calculateValueForState(30, allSubsets[0], "AA"));
 }
 
-partOne();
+// partOne();
 
 function calculateTotalValueTillEnd(subset, remainingMinutes) {
+    // console.log(subset)
     return (
         vertices
             .filter((a) => subset.has(a.self))
@@ -139,24 +139,150 @@ function calculateTotalValueTillEnd(subset, remainingMinutes) {
     );
 }
 
-function moveOrOpen(loc, targetLocation) {
-    if (loc.self === targetLocation.self && loc.active === false) {
-        targetLocation.active = true;
-        return loc;
-    } else {
-        const neighbouringVertices = loc.nextVertices;
-        let minimumDistance = Infinity;
-        let relatedVertex = null;
-        for (let i = 0; i < neighbouringVertices.length; i++) {
-            let currentDistance = allPairShortestPaths.get(
-                `${neighbouringVertices[i]}-${targetLocation.self}`
-            );
-            if (currentDistance < minimumDistance) {
-                minimumDistance = currentDistance;
-                relatedVertex = neighbouringVertices[i];
-            }
-        }
-        relatedVertex = vertices.find((a) => a.self === relatedVertex);
-        return relatedVertex;
+function calculateTotalValueTillEndWithTwo(subset, rem1, rem2,loc1,loc2) {
+    // console.log(subset)
+    let tempSubset=structuredClone(subset);
+
+    if(rem1>rem2){
+        tempSubset.delete(loc2);
     }
+    else{
+        tempSubset.delete(loc1);
+    }
+    return (
+        vertices
+            .filter((a) => subset.has(a.self))
+            .reduce((acc, curr) => acc + curr.rate, 0) * Math.min(rem1,rem2)
+        +
+        vertices
+            .filter((a) => tempSubset.has(a.self))
+            .reduce((acc, curr) => acc + curr.rate, 0) * Math.abs(rem2-rem1)
+    );
 }
+
+function partTwo() {
+    function calculateValueForState(
+        time1,
+        time2,
+        subset,
+        location1,
+        location2
+    ) {
+        if (time1 <= 0 && time2 <= 0) {
+            return 0;
+        }
+
+        const valvesToBeActivated = vertices.filter((a) => !subset.has(a.self));
+        const valvesThatCouldBeReachedByOne = valvesToBeActivated.filter(
+            (a) => allPairShortestPaths.get(`${location1}-${a.self}`) < time1 - 1 
+        );
+        const valvesThatCouldBeReachedByTwo = valvesToBeActivated.filter(
+            (a) => allPairShortestPaths.get(`${location2}-${a.self}`) < time2 - 1
+            )
+        let maxValue = calculateTotalValueTillEndWithTwo(
+            subset,
+            time1,
+        time2,
+        location1,
+        location2
+        );
+        if(valvesThatCouldBeReachedByTwo.length===0&&valvesThatCouldBeReachedByOne.length===0){
+            return maxValue;
+        }
+        // else if(valvesThatCouldBeReachedByTwo.length===0){
+            // console.log(valvesThatCouldBeReachedByOne,valvesThatCouldBeReachedByTwo);
+            for (let valve1 of valvesThatCouldBeReachedByOne) {
+                const timeToOpen1 =
+                    allPairShortestPaths.get(`${location1}-${valve1.self}`) + 1;
+                let tempValue = 
+                calculateValueForState(
+                    time1 - timeToOpen1,
+                    time2,
+                    structuredClone(subset).add(valve1.self),
+                    valve1.self,
+                    location2
+                )
+                // tempValue+=calculateTotalValueTillEnd(subset,time1-timeToOpen1);
+                // tempValue+=calculateTotalValueTillEndWithTwo(subset,Math.min(time1-time2,timeToOpen1),0,valve1.self,location2)
+                if (tempValue > maxValue) {
+                    maxValue = tempValue;
+                }
+            }
+        // }else if(valvesThatCouldBeReachedByOne.length===0){
+            for (let valve2 of valvesThatCouldBeReachedByTwo) {
+                // console.log(valvesThatCouldBeReachedByOne,valvesThatCouldBeReachedByTwo);
+                const timeToOpen2 =
+                    allPairShortestPaths.get(`${location2}-${valve2.self}`) + 1;
+                // if(time1-timeToOpen1<=0 || time2-timeToOpen2<=0){continue;}
+                let tempValue = 
+                calculateValueForState(
+                    time1 ,
+                    time2 - timeToOpen2,
+                    structuredClone(subset).add(valve2.self),
+                    location1,
+                    valve2.self
+                )
+                // tempValue+= calculateTotalValueTillEnd(subset,Math.min(timeToOpen2,Math.max(time2-time1,0)));
+                // tempValue+=calculateTotalValueTillEndWithTwo(subset,0,Math.min(time2-time1,timeToOpen2),location1,valve2.self)
+                if (tempValue > maxValue) {
+                    maxValue = tempValue;
+                }
+            }
+        // }else{
+            // console.log(valvesThatCouldBeReachedByOne,valvesThatCouldBeReachedByTwo);
+            for (let valve1 of valvesThatCouldBeReachedByOne) {
+                for (let valve2 of valvesThatCouldBeReachedByTwo) {
+                    if(valve1.self===valve2.self){continue;}
+                    const timeToOpen1 =
+                        allPairShortestPaths.get(`${location1}-${valve1.self}`) + 1;
+                    const timeToOpen2 =
+                        allPairShortestPaths.get(`${location2}-${valve2.self}`) + 1;
+                    // if(time1-timeToOpen1<=0 || time2-timeToOpen2<=0){continue;}
+                    let tempValue = 
+                    calculateValueForState(
+                        time1 - timeToOpen1,
+                        time2 - timeToOpen2,
+                        structuredClone(subset).add(valve1.self).add(valve2.self),
+                        valve1.self,
+                        valve2.self
+                    )
+                    // if(Math.min(time1-timeToOpen1,time2-timeToOpen2)>0){
+                    //     tempValue+=calculateTotalValueTillEnd(subset,Math.min(time1,time2)-Math.max(time1-timeToOpen1,time2-timeToOpen2));
+                    // }
+                    // if(time1-timeToOpen1>time2-timeToOpen2 && time1-timeToOpen1>0){
+                    //     tempValue+=calculateTotalValueTillEnd(structuredClone(subset).add(valve1.self),timeToOpen2)
+                    // }else if(time1-timeToOpen1<time2-timeToOpen2 && time2-timeToOpen2>0){
+                    //     tempValue+=calculateTotalValueTillEnd(structuredClone(subset).add(valve2.self),timeToOpen1)
+                    // }
+                    if (tempValue > maxValue) {
+                        maxValue = tempValue;
+                    }
+                }
+            }
+        // }
+        // console.log(time1, time2, subset, location1, location2, maxValue);
+        return maxValue;
+    }
+
+    function calculateValueForState2(
+        time1,
+        time2,
+        subset,
+        location1,
+        location2
+    ) {
+        return calculateValueForState(
+            time1,
+            time2,
+            subset,
+            location1,
+            location2
+        );
+    }
+    // console.log(calculateValueForState2(6,6, allSubsets[0], "AA", "AA"));
+    // console.log(calculateValueForState2(2,3, structuredClone(allSubsets[0]).add("JJ").add("DD"), "JJ", "DD"));
+    console.log(calculateValueForState2(26,26, allSubsets[0], "AA", "AA"));
+
+}
+
+partTwo();
