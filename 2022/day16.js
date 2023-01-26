@@ -74,30 +74,15 @@ function prepareData(filename) {
         vertices[i] = {
             self: vertices[i][0],
             rate: vertices[i][1],
-            // incomingPerson: false,
         };
     }
     let zeroVertices = vertices.filter((a) => a.rate === 0).map((a) => a.self);
-    // let nonZeroVertices = vertices.filter((a) => a.rate > 0).map((a) => a.self);
-
-    // function getAllSubsets(array) {
-    //     const activeVertices = [new Set(zeroVertices)];
-
-    //     for (const el of array) {
-    //         const last = activeVertices.length - 1;
-    //         for (let i = 0; i <= last; i++) {
-    //             const copySet = structuredClone(activeVertices[i]).add(el);
-    //             activeVertices.push(copySet);
-    //         }
-    //     }
-
-    //     return activeVertices;
-    // }
 
     return [vertices, new Set(zeroVertices), allPairShortestPaths];
 }
 
-const [allVertices, baseSubset, allPairShortestPaths] = prepareData(`day16input.txt`);
+const [allVertices, baseSubset, allPairShortestPaths] =
+    prepareData(`day16input.txt`);
 // const [allVertices, baseSubset, allPairShortestPaths] = prepareData(`day16test.txt`);
 
 function partOne() {
@@ -128,7 +113,6 @@ function partOne() {
     console.log(calculateValueForState(30, new Set([]), "AA"));
 
     function calculateTotalValueTillEnd(subset, remainingMinutes) {
-        // console.log(subset)
         return (
             vertices
                 .filter((a) => subset.has(a.self))
@@ -139,7 +123,7 @@ function partOne() {
 
 partOne();
 
-function convertSetToString(set){
+function convertSetToString(set) {
     return JSON.stringify(Array.from(set).sort());
 }
 
@@ -157,45 +141,54 @@ function partTwo() {
         if (time1 <= 0 && time2 <= 0) {
             return 0;
         }
-        const searchQuery1 = `${time1};${time2};${convertSetToString(subset1)};${convertSetToString(subset2)};${location1};${location2}}`;
-        const searchQuery2 = `${time2};${time1};${convertSetToString(subset2)};${convertSetToString(subset1)};${location2};${location1}}`;
+        const searchQuery1 = `${time1};${time2};${convertSetToString(
+            subset1
+        )};${convertSetToString(subset2)};${location1};${location2}}`;
+        const searchQuery2 = `${time2};${time1};${convertSetToString(
+            subset2
+        )};${convertSetToString(subset1)};${location2};${location1}}`;
 
-        if(resultMap.get(searchQuery1)){
+        if (resultMap.get(searchQuery1)) {
             return resultMap.get(searchQuery1);
         }
-        if(resultMap.get(searchQuery2)){
+        if (resultMap.get(searchQuery2)) {
             return resultMap.get(searchQuery2);
         }
 
-        const valvesToBeActivated = vertices.filter((a) => !subset1.has(a.self) && !subset2.has(a.self));
+        const valvesToBeActivated = vertices.filter(
+            (a) => !subset1.has(a.self) && !subset2.has(a.self)
+        );
         const valvesThatCouldBeReachedByOne = valvesToBeActivated.filter(
-            (a) => allPairShortestPaths.get(`${location1}-${a.self}`) < time1 - 1 
+            (a) =>
+                allPairShortestPaths.get(`${location1}-${a.self}`) < time1 - 1
         );
         const valvesThatCouldBeReachedByTwo = valvesToBeActivated.filter(
-            (a) => allPairShortestPaths.get(`${location2}-${a.self}`) < time2 - 1
-            )
+            (a) =>
+                allPairShortestPaths.get(`${location2}-${a.self}`) < time2 - 1
+        );
         let maxValue = calculateTotalValueTillEndWithTwo(
             subset1,
             subset2,
             time1,
             time2
-            );
-        if(valvesThatCouldBeReachedByTwo.length===0&&valvesThatCouldBeReachedByOne.length===0){
-            return maxValue;
-        }
+        );
         for (let valve1 of valvesThatCouldBeReachedByOne) {
             const timeToOpen1 =
                 allPairShortestPaths.get(`${location1}-${valve1.self}`) + 1;
-            let tempValue = 
-            calculateValueForState(
+            let tempValue = calculateValueForState(
                 time1 - timeToOpen1,
                 time2,
                 structuredClone(subset1).add(valve1.self),
                 subset2,
                 valve1.self,
                 location2
-            )
-            tempValue+=calculateTotalValueTillEndWithTwo(subset1,subset2,timeToOpen1,0);
+            );
+            tempValue += calculateTotalValueTillEndWithTwo(
+                subset1,
+                subset2,
+                timeToOpen1,
+                0
+            );
             if (tempValue > maxValue) {
                 maxValue = tempValue;
             }
@@ -203,61 +196,73 @@ function partTwo() {
         for (let valve2 of valvesThatCouldBeReachedByTwo) {
             const timeToOpen2 =
                 allPairShortestPaths.get(`${location2}-${valve2.self}`) + 1;
-            let tempValue = 
-            calculateValueForState(
-                time1 ,
+            let tempValue = calculateValueForState(
+                time1,
                 time2 - timeToOpen2,
                 subset1,
                 structuredClone(subset2).add(valve2.self),
                 location1,
                 valve2.self
-            )
-            tempValue+=calculateTotalValueTillEndWithTwo(subset1,subset2,0,timeToOpen2);
+            );
+            tempValue += calculateTotalValueTillEndWithTwo(
+                subset1,
+                subset2,
+                0,
+                timeToOpen2
+            );
             if (tempValue > maxValue) {
                 maxValue = tempValue;
             }
         }
         for (let valve1 of valvesThatCouldBeReachedByOne) {
             for (let valve2 of valvesThatCouldBeReachedByTwo) {
-                if(valve1.self===valve2.self){continue;}
+                if (valve1.self === valve2.self) {
+                    continue;
+                }
                 const timeToOpen1 =
                     allPairShortestPaths.get(`${location1}-${valve1.self}`) + 1;
                 const timeToOpen2 =
                     allPairShortestPaths.get(`${location2}-${valve2.self}`) + 1;
-                let tempValue = 
-                calculateValueForState(
-                    time1 - timeToOpen1,
-                    time2 - timeToOpen2,
-                    structuredClone(subset1).add(valve1.self),
-                    structuredClone(subset2).add(valve2.self),
-                    valve1.self,
-                    valve2.self
-                )+calculateTotalValueTillEndWithTwo(subset1,subset2,timeToOpen1,timeToOpen2);
+                let tempValue =
+                    calculateValueForState(
+                        time1 - timeToOpen1,
+                        time2 - timeToOpen2,
+                        structuredClone(subset1).add(valve1.self),
+                        structuredClone(subset2).add(valve2.self),
+                        valve1.self,
+                        valve2.self
+                    ) +
+                    calculateTotalValueTillEndWithTwo(
+                        subset1,
+                        subset2,
+                        timeToOpen1,
+                        timeToOpen2
+                    );
                 if (tempValue > maxValue) {
                     maxValue = tempValue;
                 }
             }
         }
-        resultMap.set(searchQuery1,maxValue);
+        resultMap.set(searchQuery1, maxValue);
         return maxValue;
     }
 
-    console.log(calculateValueForState(26,26, new Set([]), new Set([]),"AA", "AA"));
+    console.log(
+        calculateValueForState(26, 26, new Set([]), new Set([]), "AA", "AA")
+    );
 
-
-    function calculateTotalValueTillEndWithTwo(subset1,subset2, rem1, rem2) {
-
+    function calculateTotalValueTillEndWithTwo(subset1, subset2, rem1, rem2) {
         return (
             vertices
                 .filter((a) => subset1.has(a.self))
-                .reduce((acc, curr) => acc + curr.rate, 0) * rem1
-            +
+                .reduce((acc, curr) => acc + curr.rate, 0) *
+                rem1 +
             vertices
                 .filter((a) => subset2.has(a.self))
-                .reduce((acc, curr) => acc + curr.rate, 0) * rem2
+                .reduce((acc, curr) => acc + curr.rate, 0) *
+                rem2
         );
     }
-
 }
 
 partTwo();
