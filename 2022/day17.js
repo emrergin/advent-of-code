@@ -72,18 +72,8 @@ class Board{
                 }
             }
         }
+
         for(let i=0;i<numberOfLines;i++){
-            // let willFall=true;
-            // let hasMovingCells = false;
-            // for(let j=0;j<numberOfColumns;j++){
-            //     if(this.lines[i][j]==="@"){
-            //         hasMovingCells=true;
-            //         if(this.lines[i+1][j]==="#"){
-            //             willFall=false;
-            //         }
-            //     }
-            // }
-            // if(hasMovingCells && willFall){
             if(continueFalling){
                 for(let j=0;j<numberOfColumns;j++){
                     if(this.lines[i][j]==="@"){
@@ -92,24 +82,21 @@ class Board{
                     }
                 }
             }
-            // if(hasMovingCells&&!willFall){
             else{
-                for(let j=0;j<numberOfColumns;j++){
+                for(let j=0;j<numberOfColumns;j++){                    
                     if(this.lines[i][j]==="@"){
                         this.lines[i][j]="#"
                     }
                 }
             }
-
         }
         return continueFalling;
     }
     wind(w){
         let numberOfLines = this.lines.length;
         let numberOfColumns = this.dimensions;
+
         if(w===1){
-            // let willMove=true;
-            // let movingPieces=false;
             for(let i=0;i<numberOfLines;i++){
                 for(let j=numberOfColumns-1;j>=0;j--){
                     if(this.lines[i][j]==="@" && this.lines[i][j+1]==="#" ){
@@ -121,8 +108,6 @@ class Board{
             for(let i=0;i<numberOfLines;i++){
                 for(let j=numberOfColumns-1;j>=0;j--){
                     if(this.lines[i][j]==="@"){
-                        // this.lines[i][j+1]="@";
-                        // this.lines[i][j]="."
                         let temp = this.lines[i][j+1];
                         this.lines[i][j+1]=this.lines[i][j];
                         this.lines[i][j]=temp;
@@ -149,26 +134,6 @@ class Board{
                     }
                 }
             }
-            // for(let j=0;j<numberOfColumns;j++){
-            //     let willMove=true;
-            //     let movingPieces=false;
-            //     for(let i=0;i<numberOfLines;i++){
-            //         if(this.lines[i][j]==="@"){
-            //             movingPieces=true;
-            //             if(this.lines[i][j-1]!=="."){
-            //                 willMove=false;
-            //             }
-            //         }
-            //     }
-            //     if(willMove&&movingPieces){
-            //         for(let i=0;i<numberOfLines;i++){
-            //             if(this.lines[i][j]==="@"){
-            //                 this.lines[i][j-1]="@";
-            //                 this.lines[i][j]="."
-            //             }
-            //         }
-            //     } 
-            // }
         }
     }
     countEmptyLines(){
@@ -191,24 +156,19 @@ let board = new Board(9);
 let numberOfPiecesSoFar=0;
 let windIndex = 0;
 
-while(numberOfPiecesSoFar<2022){
+while(numberOfPiecesSoFar<30000){
     let isFalling=true;
     board.addPiece(numberOfPiecesSoFar%5+1);
-    numberOfPiecesSoFar%10000===0?console.log(numberOfPiecesSoFar):false;
-    // board.print();
     numberOfPiecesSoFar++;
+    if(numberOfPiecesSoFar%1000===0){console.log(numberOfPiecesSoFar);}
+    if(windIndex%inputLength===0 && numberOfPiecesSoFar%5===0){
+        console.log('!!',numberOfPiecesSoFar)
+    }
     while(isFalling){
         board.wind(commands[windIndex%inputLength]);
-        // console.log(windIndex%inputLength,commands[windIndex%inputLength]);
         windIndex++;
         isFalling = board.gravity();
-        // board.print();
     }
     board.removeLinesFromBeginning();
 }
-
-board.print();
-// console.log(board.lines[0].join(""),board.lines[1].join(""),board.lines[0].join(""),board.lines[2].join(""),board.lines[3].join(""))
-console.log(board.lines.length-4);
-
-
+console.log(board.lines.length-4)
