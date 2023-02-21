@@ -80,24 +80,29 @@ function makeGeodeMachine(state,com){
 
 function findMax(command,remainingTime){
     const startingState = [0,0,0,0,1,0,0,0,remainingTime];
-    let maxGeode=-Infinity;
+    let maxGeodes= new Array(remainingTime).fill(-Infinity);
 
     let solutionStack = [];
     solutionStack.push(startingState);
 
     while(solutionStack.length>0){
         const currentState = solutionStack.pop();
-        maxGeode=Math.max(currentState[3],maxGeode);
+        maxGeodes[remainingTime-currentState[8]]=Math.max(currentState[3],maxGeodes[remainingTime-currentState[8]]);
         if(currentState[8]===0){
             continue;
         }
+        // if(maxGeodes[remainingTime-currentState[8]]===-Infinity && currentState[8]<remainingTime){
+        //     maxGeodes[remainingTime-currentState[8]]=maxGeodes[remainingTime-currentState[8]-1];
+        // }
+        // if(Math.floor(maxGeodes[remainingTime-currentState[8]]/2) > currentState[3]){
+        //     continue;
+        // }
         if (checkGeode(currentState,command)){
             solutionStack.push(makeGeodeMachine(currentState,command));
             continue;
         }
         if (checkObsidian(currentState,command)){
             solutionStack.push(makeObsidianMachine(currentState,command));
-            // continue;
             if(currentState[2]<currentState[0]){
                 continue;
             }
@@ -107,9 +112,6 @@ function findMax(command,remainingTime){
             const necessaryOre = command[4]+command[5]*command[2]+command[5]*command[3]*command[1];
             const necessaryClay = command[5]*command[3];
 
-            // if((currentState[1]+currentState[5]*(remainingTime-currentState[8]))*necessaryOre>(currentState[0]+currentState[4]*(remainingTime-currentState[8]))*necessaryClay){
-            //     continue;
-            // }
             if(necessaryOre-currentState[0]<necessaryClay-currentState[1]){
                 continue;
             }
@@ -120,7 +122,8 @@ function findMax(command,remainingTime){
         solutionStack.push(passTime(currentState,command));
     }
 
-    return maxGeode;
+    // console.log(maxGeodes);
+    return maxGeodes[remainingTime-1];
 }
 
 function partOne(){
