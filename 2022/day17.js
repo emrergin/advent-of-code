@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
-// const commands = readFileSync(`day17test.txt`, "utf-8").split("").map(a=>a===">"?1:0);
-const commands = readFileSync(`day17input.txt`, "utf-8").split("").map(a=>a===">"?1:0);
+const commands = readFileSync(`day17test.txt`, "utf-8").split("").map(a=>a===">"?1:0);
+// const commands = readFileSync(`day17input.txt`, "utf-8").split("").map(a=>a===">"?1:0);
 const inputLength = commands.length;
 // 1 to right 0 to left
 
@@ -151,24 +151,130 @@ class Board{
     }
 }
 
-let board = new Board(9);
+function partOne(){
 
-let numberOfPiecesSoFar=0;
-let windIndex = 0;
-
-while(numberOfPiecesSoFar<30000){
-    let isFalling=true;
-    board.addPiece(numberOfPiecesSoFar%5+1);
-    numberOfPiecesSoFar++;
-    if(numberOfPiecesSoFar%1000===0){console.log(numberOfPiecesSoFar);}
-    if(windIndex%inputLength===0 && numberOfPiecesSoFar%5===0){
-        console.log('!!',numberOfPiecesSoFar)
+    let board = new Board(9);
+    
+    let numberOfPiecesSoFar=0;
+    let windIndex = 0;
+    
+    while(numberOfPiecesSoFar<2022){
+        let isFalling=true;
+        board.addPiece(numberOfPiecesSoFar%5+1);
+        numberOfPiecesSoFar++;
+        while(isFalling){
+            board.wind(commands[windIndex%inputLength]);
+            windIndex++;
+            isFalling = board.gravity();
+        }
+        board.removeLinesFromBeginning();
     }
-    while(isFalling){
-        board.wind(commands[windIndex%inputLength]);
-        windIndex++;
-        isFalling = board.gravity();
-    }
-    board.removeLinesFromBeginning();
+    console.log(board.lines.length-4)
 }
-console.log(board.lines.length-4)
+
+function partTwo(){
+
+    let board = new Board(9);
+    
+    let numberOfPiecesSoFar=0;
+    let windIndex = 0;
+    let heightsAfterPieces=[0];
+    
+    while(!longestRepeatingSubarray(heightsAfterPieces)){
+        let isFalling=true;
+        board.addPiece(numberOfPiecesSoFar%5+1);
+        numberOfPiecesSoFar++;
+        while(isFalling){
+            board.wind(commands[windIndex%inputLength]);
+            windIndex++;
+            isFalling = board.gravity();
+        }
+        board.removeLinesFromBeginning();
+        let previousCell = heightsAfterPieces[heightsAfterPieces.length-1];
+        // console.log(previousCell,board.lines.length-4);
+        heightsAfterPieces.push(board.lines.length-4-previousCell);
+        // console.log(heightsAfterPieces.slice(-3))
+    }
+    // while(!patternFound(heightsAfterPieces)){
+    //     heightsAfterPieces.shift();
+    // }
+    console.log(heightsAfterPieces.length);
+
+    console.log(board.lines.length-4,numberOfPiecesSoFar);
+    console.log(Math.floor(1000000000000/(numberOfPiecesSoFar)) * board.lines.length-4);
+}
+
+// partOne();
+partTwo();
+
+
+const exampleArray = [5,6,7,1,2,3,4,1,2,3,4];
+// function longestRepeatingSubarray(array){
+
+
+// }
+
+function longestRepeatingSubarray(a)
+{
+    let n = a.length;
+    let LCSRe = new Array(n+1);
+    for(let i = 0; i < n + 1; i++)
+    {
+        LCSRe[i] = new Array(n+1);
+    }
+    for(let i = 0; i < n + 1; i++)
+    {
+        for(let j = 0; j < n + 1; j++)
+        {
+            LCSRe[i][j] = 0;
+        }
+    }
+     
+    let res = []; // To store result
+    let res_length = 0; // To store length of result
+     
+    // building table in bottom-up manner
+    let i, index = 0;
+    for (i = 1; i <= n; i++)
+    {
+        for (let j = i + 1; j <= n; j++)
+        {
+         
+            // (j-i) > LCSRe[i-1][j-1] to remove
+            // overlapping
+            if (a[i-1] == a[j-1]
+                    && LCSRe[i - 1][j - 1] < (j - i))
+            {
+                LCSRe[i][j] = LCSRe[i - 1][j - 1] + 1;
+
+                // updating maximum length of the
+                // substring and updating the finishing
+                // index of the suffix
+                if (LCSRe[i][j] > res_length)
+                {
+                    res_length = LCSRe[i][j];
+                    index = Math.max(i, index);
+                }
+            }
+            else
+            {
+                LCSRe[i][j] = 0;
+            }
+        }
+    } 
+
+    // If we have non-empty result, then insert all
+    // characters from first character to last
+    // character of String
+    // if (res_length > 0) {
+    //     for (i = index - res_length + 1; i <= index; i++) {
+    //         res.push(a[i - 1]);
+    //     }
+    // }
+
+    // return res;
+    console.log(res_length,a.length);
+    return res_length>a.length/3;
+}
+
+// console.log(longestRepeatingSubarray(exampleArray))

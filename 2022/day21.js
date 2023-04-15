@@ -42,7 +42,6 @@ function autoYeller(value){
     const mapOfValues = new Map();
     let commandCopy = [...commands];
     while(mapOfValues.get('root')===undefined){
-        // console.log(commandCopy);
         for(let command of commandCopy){
             if(command[1].length===1){
                 if(command[0]==="humn"){
@@ -54,7 +53,6 @@ function autoYeller(value){
             else{
                 const term1 = mapOfValues.get(command[1][0]);
                 const term2 = mapOfValues.get(command[1][2]);
-                // console.log(term1,term2)
                 if(term1!==undefined && term2!==undefined){
                     if(command[0]==="root"){
                         mapOfValues.set(command[0],term1-term2);    
@@ -70,9 +68,6 @@ function autoYeller(value){
                             mapOfValues.set(command[0],term1*term2);                
                         }
                         if(command[1][1]==='/'){
-                            // if(term1/term2 !== Math.floor(term1/term2)){
-                            //     return -Infinity;
-                            // }
                             mapOfValues.set(command[0],term1/term2);
                         }
                     }
@@ -85,7 +80,6 @@ function autoYeller(value){
     return mapOfValues.get("root");
 }
 
-// autoYeller(300)
 function bruteForce(val,step){
     let i=val;
     while(true){
@@ -109,7 +103,7 @@ function bruteForce(val,step){
 
 
 function optimizationAttempt(){
-    let i=10000000;
+    let i=0;
     let maxPositive=-Infinity;
     let minNegative=Infinity;
     let movement=1;
