@@ -37,7 +37,6 @@ function parseInput(input) {
     }
     if (input.length === 1) {
         if (isNaN(input[0])) {
-            console.log(input[0], result[input[0]]);
             return result[input[0]];
         }
         return Number(input[0]);
