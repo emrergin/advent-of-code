@@ -9,7 +9,13 @@ for(let i=0;i<commands.length;i++){
     specialCount+=getSpecialCount(commands[i]);
 }
 
-console.log(specialCount);
+let specialCount2 =0;
+for(let i=0;i<commands.length;i++){
+    specialCount2+=getSpecialCount2(commands[i])+2;
+}
+
+console.log(specialCount2);
+
 
 function getSpecialCount(text){
     const quoteCount1 = (text.match(/^\"/g) || []).length;
@@ -23,4 +29,12 @@ function getSpecialCount(text){
     const hexaCount = (text5.match(/\\x/g) || []).length;
 
     return quoteCount1+quoteCount2+quoteCount3+slashCount+3*hexaCount;
+}
+
+function getSpecialCount2(text){
+    const textLength = text.length;
+    const text4= text.replaceAll(/\"/g, "aa");
+    const text5= text4.replaceAll(/\\/g, "aa");
+    
+    return text5.length - textLength;
 }
