@@ -6,20 +6,22 @@ function process(number){
             acc.push([curr]);
         }
         return acc;
-    },[]).map(a=> [a.length,...a]).map(a=>`${a[0]}${a[1]}`).join("")
+    },[]).map(a=>`${a.length}${a[0]}`).join("")
 
     return stringNumber;
 }
 
-// process("1321131112")
-let oldNumber = "1321131112";
-// let oldNumber = "1";
-let newNumber;
-for(let i=0;i<50;i++){
-    newNumber = process(oldNumber);
-    oldNumber= newNumber;
+function processNTimes(startingNumber, n){
+    let oldNumber = startingNumber;
+    let newNumber;
+    for(let i=0;i<n;i++){
+        newNumber = process(oldNumber);
+        oldNumber= newNumber;
+    }
+    
+    console.log(oldNumber.length);
 }
 
-console.log(oldNumber.length);
-
-// process("111221")
+//Part 1 -----
+processNTimes("1321131112",40);
+processNTimes("1321131112",50)

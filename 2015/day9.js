@@ -12,16 +12,6 @@ lines.forEach(a=> {
 
 const allCities = [...lines.map(line=> new Set([line[0],line[2]])).reduce((acc,curr)=> union(acc,curr), new Set([]))];
 
-function union(setA, setB) {
-    const union = new Set(setA);
-
-    for (const elem of setB) {
-        union.add(elem);
-    }
-
-    return union;
-}
-
 const allPermutations=permutator(allCities);
 
 let minDistance = Number.MAX_SAFE_INTEGER;
@@ -45,6 +35,18 @@ for (let permutation of allPermutations){
 }
 
 console.log(maxDistance);
+
+
+function union(setA, setB) {
+    const union = new Set(setA);
+
+    for (const elem of setB) {
+        union.add(elem);
+    }
+
+    return union;
+}
+
 
 function permutator(inputArr) {
     let result = [];
