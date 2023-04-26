@@ -11,6 +11,7 @@
 -   Even the "BigInt" literal type has an upper bound, albeit not specified anywhere. Differently from "Number", if one overshoots the bound, they don't end up with Infinity, instead it is truncated.
 -   One must try to manipulate the data using least common multiples dealing with huge numbers.
 -   `Set.delete()` does not return the set, it returns a boolean.
+- I used this challenge to learn Java! Check out: https://github.com/emrergin/advent-of-code/tree/main/2018
 
 ### Influences
 
