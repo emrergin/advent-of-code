@@ -56,7 +56,7 @@ const IntCode6 = [
 
 let maxAmp = Number.MIN_SAFE_INTEGER;
 let win;
-let currentIntCode = IntCode5;
+let currentIntCode = IntCode;
 
 function solvePart1() {
     const allPermutations = permutator([0, 1, 2, 3, 4]);
