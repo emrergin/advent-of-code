@@ -2,7 +2,7 @@ export default class Computer {
   constructor(opcode, inputs = [], relativeBase = 0) {
     this.pointer = 0;
     this.halted = false;
-    this.opcode = opcode;
+    this.opcode = [...opcode];
     this.outputs = [];
     this.inputs = inputs.map((a) => String(a));
     this.relativeBase = relativeBase;
@@ -43,6 +43,11 @@ export default class Computer {
     }
   }
 
+  inputToOpCode(index) {
+    this.opcode[index] = String(this.inputs.shift() || 0);
+    this.pointer += 2;
+  }
+
   workOnce() {
     const currentCommand = this.opcode[this.pointer].slice(-2);
     const parameterMode = this.opcode[this.pointer]
@@ -72,8 +77,7 @@ export default class Computer {
         break;
       case "3":
       case "03":
-        this.opcode[parameterIndexes[0]] = String(this.inputs.shift() || 0);
-        this.pointer += Computer.parameterMap.get(currentCommand) + 1;
+        this.inputToOpCode(parameterIndexes[0]);
         break;
       case "4":
       case "04":

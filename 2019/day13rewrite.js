@@ -13,67 +13,55 @@ export class ArcadeMachine extends Computer {
   }
 
   positionOfBall() {
-    console.log(this.outputs);
-    return this.outputs.find(
+    return this.outputs.findLast(
       (a, index) => index % 3 === 0 && this.outputs[index + 2] === "4"
     );
   }
 
   newInput() {
-    const [paddlePositionLeft, paddlePositionRight] = this.paddlePosition;
     const currentBallPosition = this.positionOfBall();
-    if (+paddlePositionLeft > +currentBallPosition) {
-      this.inputs.push("-1");
-    } else if (+paddlePositionRight < +currentBallPosition) {
-      this.inputs.push("1");
-    } else {
-      this.inputs.push("0");
+    if (+this.paddlePosition > +currentBallPosition) {
+      return "-1";
+    } else if (+this.paddlePosition < +currentBallPosition) {
+      return "1";
     }
+    return "0";
   }
 
   get paddlePosition() {
-    const leftEdge =
-      this.outputs.findIndex((a, index) => index % 3 === 2 && a === "3") - 2;
-    const rightEdge =
+    const index =
       this.outputs.findLastIndex((a, index) => index % 3 === 2 && a === "3") -
       2;
-    return [this.outputs[leftEdge], this.outputs[rightEdge]];
+    return this.outputs[index];
   }
 
   get score() {
     const indexOfScore =
-      this.outputs.findIndex((a, index) => index % 3 === 0 && a === "-1") + 2;
-    return this.outputs[indexOfScore];
+      this.outputs.findLastIndex((a, index) => index % 3 === 0 && a === "-1") +
+      2;
+
+    if (indexOfScore % 3 === 2) {
+      return +this.outputs[indexOfScore];
+    }
+    return 0;
   }
 
-  workTillEnd() {
-    while (!this.halted) {
-      let currentInputSize = this.inputs.length;
-      super.workOnce();
-      let updatedInputSize = this.inputs.length;
-      if (updatedInputSize > currentInputSize) {
-        this.inputs.pop();
-        this.newInput();
-      }
-    }
-    return this.score;
+  inputToOpCode(index) {
+    this.opcode[index] = String(this.newInput());
+    this.pointer += 2;
   }
 }
 
 function partOne() {
-  const machine = new ArcadeMachine(nums, ["2"]);
+  const machine = new ArcadeMachine(nums, []);
   machine.workTillEnd();
   console.log(machine.numberOfBlocks);
 }
 
 function partTwo() {
-  const machine = new ArcadeMachine(nums, ["2"]);
-  let score;
-  while (machine.numberOfBlocks > 0) {
-    score = machine.workTillEnd() || score;
-  }
-  console.log(score, machine.numberOfBlocks);
-  console.log(machine.paddlePosition);
+  const machine = new ArcadeMachine(nums, []);
+  machine.workTillEnd();
+  console.log(machine.score);
 }
 
 partOne();
