@@ -3,7 +3,14 @@ import Computer from "./Computer.js";
 const nums = readFileSync(`day15input.txt`, "utf-8").split(",");
 
 export class RepairDroid extends Computer {
-  constructor(opcode, inputs = [], relativeBase = 0, startingX, startingY) {
+  constructor(
+    opcode,
+    inputs = [],
+    relativeBase = 0,
+    startingX,
+    startingY,
+    stopWhenOxygen = false
+  ) {
     super(opcode, inputs, relativeBase);
     this.lastInput = null;
     this.tileMap = new Map();
@@ -15,8 +22,8 @@ export class RepairDroid extends Computer {
       0,
       null
     );
-    this.numberOfSteps = 0;
     this.unexplored = 1;
+    this.stopWhenOxygen = stopWhenOxygen;
   }
 
   static directions = [
@@ -55,15 +62,15 @@ export class RepairDroid extends Computer {
       this.neighbours = [];
       this.cameVia = cameVia;
       this.movesSoFar = [false, false, false, false];
-      tileMap.set(`${x}-${y}`, this);
+      tileMap.set(`x:${x}-y:${y}`, this);
       if (cameVia !== null) {
         this.movesSoFar[RepairDroid.reverseMoves[cameVia]] = true;
       }
 
-      const neighbours1 = tileMap.get(`${x - 1}-${y}`);
-      const neighbours2 = tileMap.get(`${x + 1}-${y}`);
-      const neighbours3 = tileMap.get(`${x}-${y - 1}`);
-      const neighbours4 = tileMap.get(`${x}-${y + 1}`);
+      const neighbours1 = tileMap.get(`x:${x - 1}-y:${y}`);
+      const neighbours2 = tileMap.get(`x:${x + 1}-y:${y}`);
+      const neighbours3 = tileMap.get(`x:${x}-y:${y - 1}`);
+      const neighbours4 = tileMap.get(`x:${x}-y:${y + 1}`);
       if (neighbours1 && neighbours1.content !== "0") {
         this.neighbours.push(neighbours1);
         neighbours1.neighbours.push(this);
@@ -135,7 +142,7 @@ export class RepairDroid extends Computer {
       const newY =
         RepairDroid.directions[this.lastInput].dy + this.currentTile.y;
 
-      let nextTile = this.tileMap.get(`${newX}-${newY}`);
+      let nextTile = this.tileMap.get(`x:${newX}-y:${newY}`);
       if (!nextTile) {
         nextTile = new RepairDroid.Tile(
           newX,
@@ -160,6 +167,58 @@ export class RepairDroid extends Computer {
       if (this.unexplored === 0) {
         this.halted = true;
       }
+
+      if (this.currentTile.content === "2" && this.stopWhenOxygen === true) {
+        this.halted = true;
+      }
+    }
+  }
+
+  painter() {
+    console.log(Array.from(this.tileMap.keys()));
+    const regexp = /x:(\-?\d+)-y:(\-?\d+)/;
+    let limits = Array.from(this.tileMap.keys())
+      .map((a) => [a.match(regexp), a])
+      .map((a) => ({ x: +a[0][1], y: +a[0][2] }))
+      .reduce(
+        (prev, curr) => {
+          if (curr.x < prev.minX) {
+            prev.minX = curr.x;
+          }
+          if (curr.y < prev.minY) {
+            prev.minY = curr.y;
+          }
+          if (curr.x > prev.maxX) {
+            prev.maxX = curr.x;
+          }
+          if (curr.y > prev.maxY) {
+            prev.maxY = curr.y;
+            console.log(this.tileMap.get(`x:${curr.x}-y:${curr.y}`));
+          }
+
+          return prev;
+        },
+        { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity }
+      );
+
+    for (let j = limits.minY; j <= limits.maxY; j++) {
+      let currentRow = "";
+      for (let i = limits.minX; i <= limits.maxX; i++) {
+        let addedChar = ``;
+        if (this.tileMap.get(`x:${i}-y:${j}`) === undefined) {
+          addedChar = `🟦`;
+        } else if (i === 14 && j === -12) {
+          addedChar = `🟥`;
+        } else if (this.tileMap.get(`x:${i}-y:${j}`).content === "1") {
+          addedChar = `⬜`;
+        } else if (this.tileMap.get(`x:${i}-y:${j}`).content === "2") {
+          addedChar = `🟩`;
+        } else if (this.tileMap.get(`x:${i}-y:${j}`).content === "0") {
+          addedChar = `⬛`;
+        }
+        currentRow += addedChar;
+      }
+      console.log(currentRow);
     }
   }
 }
@@ -167,17 +226,26 @@ export class RepairDroid extends Computer {
 function partOne() {
   const robot = new RepairDroid(nums, [], 0, 0, 0);
   robot.workTillEnd();
-  console.log(robot.tileMap.get(`${12}-${12}`).distance);
+  console.log(robot.tileMap.get(`x:${12}-y:${12}`).distance);
 }
 
 function partTwo() {
-  const robot = new RepairDroid(nums, [], 0, 12, 12);
+  const robot = new RepairDroid(nums, [], 0, 0, 0, true);
   robot.workTillEnd();
+  const robot2 = new RepairDroid(
+    robot.opcode,
+    robot.inputs,
+    robot.relativeBase,
+    robot.currentTile.x,
+    robot.currentTile.y,
+    false
+  );
+  robot2.workTillEnd();
 
   const maxDistance = Math.max(
-    ...Array.from(robot.tileMap.values())
+    ...Array.from(robot2.tileMap.values())
       .filter((a) => a.content === "1")
-      .map((a) => a.distance)
+      .map((a) => robot2.tileMap.get(`x:${a.x}-y:${a.y}`).distance)
   );
   console.log(maxDistance);
 }
