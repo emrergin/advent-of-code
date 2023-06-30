@@ -24,6 +24,7 @@ export class RepairDroid extends Computer {
     );
     this.unexplored = 1;
     this.stopWhenOxygen = stopWhenOxygen;
+    this.target = { x: null, y: null };
   }
 
   static directions = [
@@ -66,7 +67,6 @@ export class RepairDroid extends Computer {
       if (cameVia !== null) {
         this.movesSoFar[RepairDroid.reverseMoves[cameVia]] = true;
       }
-
       const neighbours1 = tileMap.get(`x:${x - 1}-y:${y}`);
       const neighbours2 = tileMap.get(`x:${x + 1}-y:${y}`);
       const neighbours3 = tileMap.get(`x:${x}-y:${y - 1}`);
@@ -141,6 +141,10 @@ export class RepairDroid extends Computer {
         RepairDroid.directions[this.lastInput].dx + this.currentTile.x;
       const newY =
         RepairDroid.directions[this.lastInput].dy + this.currentTile.y;
+      if (response === "2") {
+        this.target.x = newX;
+        this.target.y = newY;
+      }
 
       let nextTile = this.tileMap.get(`x:${newX}-y:${newY}`);
       if (!nextTile) {
@@ -150,7 +154,8 @@ export class RepairDroid extends Computer {
           response,
           this.tileMap,
           this.currentTile.distance + 1,
-          this.lastInput
+          this.lastInput,
+          this.target
         );
         this.unexplored++;
       } else {
@@ -226,7 +231,9 @@ export class RepairDroid extends Computer {
 function partOne() {
   const robot = new RepairDroid(nums, [], 0, 0, 0);
   robot.workTillEnd();
-  console.log(robot.tileMap.get(`x:${12}-y:${12}`).distance);
+  console.log(
+    robot.tileMap.get(`x:${robot.target.x}-y:${robot.target.y}`).distance
+  );
 }
 
 function partTwo() {
