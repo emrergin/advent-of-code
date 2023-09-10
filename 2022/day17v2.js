@@ -41,8 +41,9 @@ class Board {
 }
 
 class Piece {
-  constructor(pieceType, board) {
+  constructor(board) {
     this.board = board;
+    const pieceType = (board.numberOfPieces % 5) + 1;
 
     this.cells = [];
     const heightBefore = board.lines.length;
@@ -157,10 +158,8 @@ class Cell {
 
 function addNPieces(n) {
   const board = new Board(9);
-  let numberOfPiecesSoFar = 0;
-  while (numberOfPiecesSoFar < n) {
-    new Piece((numberOfPiecesSoFar % 5) + 1, board);
-    numberOfPiecesSoFar++;
+  while (board.numberOfPieces < n) {
+    new Piece(board);
   }
   console.log(board.lines.length - 4);
 }
