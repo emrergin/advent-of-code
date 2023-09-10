@@ -1,22 +1,22 @@
 {
-    "name": "adventofcode",
-    "version": "1.0.0",
-    "description": "aoc",
-    "type": "module",
-    "main": "",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "keywords": [
-        "code",
-        "exercise"
-    ],
-    "author": "Emre Ergin",
-    "license": "MIT",
-    "dependencies": {
-        "readline-sync": "^1.4.10"
-    },
-    "devDependencies": {
-        "prettier": "2.8.8"
-    }
+  "name": "adventofcode",
+  "version": "1.0.0",
+  "description": "aoc",
+  "type": "module",
+  "main": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "code",
+    "exercise"
+  ],
+  "author": "Emre Ergin",
+  "license": "MIT",
+  "dependencies": {
+    "readline-sync": "^1.4.10"
+  },
+  "devDependencies": {
+    "prettier": "2.8.8"
+  }
 }
