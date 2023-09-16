@@ -154,24 +154,33 @@ function findMax(command, remainingTime) {
       state: currentState,
       command: command,
     });
-    waitAndMakeRobot({
-      stack: solutionStack,
-      targetRobot: "obsidian",
-      state: currentState,
-      command: command,
-    });
-    waitAndMakeRobot({
-      stack: solutionStack,
-      targetRobot: "clay",
-      state: currentState,
-      command: command,
-    });
-    waitAndMakeRobot({
-      stack: solutionStack,
-      targetRobot: "ore",
-      state: currentState,
-      command: command,
-    });
+    if (currentState.obsidianRobot < command[5]) {
+      waitAndMakeRobot({
+        stack: solutionStack,
+        targetRobot: "obsidian",
+        state: currentState,
+        command: command,
+      });
+    }
+    if (currentState.clayRobot < command[3]) {
+      waitAndMakeRobot({
+        stack: solutionStack,
+        targetRobot: "clay",
+        state: currentState,
+        command: command,
+      });
+    }
+    if (
+      currentState.oreRobot <
+      Math.max(command[0], command[1], command[2], command[4])
+    ) {
+      waitAndMakeRobot({
+        stack: solutionStack,
+        targetRobot: "ore",
+        state: currentState,
+        command: command,
+      });
+    }
 
     solutionStack.push(passTime(currentState, currentState.remainingTime));
   }
@@ -183,9 +192,7 @@ function partOne() {
   let index = 1;
   let total = 0;
   for (let command of commands) {
-    const outcome = findMax(command, 24);
-    console.log(command, outcome);
-    total += outcome * index;
+    total += findMax(command, 24) * index;
     index++;
   }
 
@@ -196,9 +203,7 @@ function partTwo() {
   let multiplied = 1;
   const firstThreeCommands = commands.slice(0, 3);
   for (let command of firstThreeCommands) {
-    const outcome = findMax(command, 32);
-    console.log(outcome);
-    multiplied *= outcome;
+    multiplied *= findMax(command, 32);
   }
   console.log(multiplied);
 }

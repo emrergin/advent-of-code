@@ -10,13 +10,11 @@ class Board {
   }
 
   askForMovementProposals() {
-    for (let elf in this.elves) {
-      console.log(elf);
+    for (let elf of this.elves) {
       if (elf.checkIfAnyoneExists()) {
         elf.checkAndProposeMovement();
       }
     }
-    console.log(elves);
   }
 }
 
@@ -26,8 +24,8 @@ class Elf {
     this.y = y;
     this.moveIndex = 0;
     this.board = board;
-    board.tilesWithElves.add(`${x}-${y}`);
     this.proposedMovement = null;
+    board.tilesWithElves.add(`${x}-${y}`);
     board.elves.push(this);
   }
 
@@ -84,17 +82,24 @@ class Elf {
     for (let i = 0; i < 4; i++) {
       //check
       for (let j = 0; j < 3; j++) {
+        console.log(
+          this.y,
+          this.y,
+          i,
+          this.x + Elf.moves[(i + this.moveIndex) % 4].checks[j].x,
+          this.y + Elf.moves[(i + this.moveIndex) % 4].checks[j].y
+        );
         if (
           this.board.tilesWithElves.has(
-            `${this.x + this.moves[(i + this.moveIndex) % 4].checks[j].x}-${
-              this.y + this.moves[(i + this.moveIndex) % 4].checks[j].y
+            `${this.x + Elf.moves[(i + this.moveIndex) % 4].checks[j].x}-${
+              this.y + Elf.moves[(i + this.moveIndex) % 4].checks[j].y
             }`
           )
         ) {
           continue;
         }
       }
-      this.proposedMovement = this.moves[(i + this.moveIndex) % 4].movement;
+      this.proposedMovement = Elf.moves[(i + this.moveIndex) % 4].movement;
     }
   }
 }
@@ -109,4 +114,6 @@ for (let i = 0; i < commands.length; i++) {
   }
 }
 
+// console.log(board.tilesWithElves);
 board.askForMovementProposals();
+// console.log(board.elves.map((e) => e.proposedMovement));
