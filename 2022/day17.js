@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
-// const commands = readFileSync(`day17test.txt`, "utf-8")
-const commands = readFileSync(`day17.txt`, "utf-8")
+const commands = readFileSync(`day17test.txt`, "utf-8")
+  // const commands = readFileSync(`day17.txt`, "utf-8")
   .split("")
   .map((a) => (a === ">" ? 1 : 0));
 const inputLength = commands.length;
