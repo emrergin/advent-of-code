@@ -80,15 +80,15 @@ class Elf {
 
   checkAndProposeMovement() {
     for (let i = 0; i < 4; i++) {
+      let relevantEmpty = true;
       //check
       for (let j = 0; j < 3; j++) {
-        console.log(
-          this.y,
-          this.y,
-          i,
-          this.x + Elf.moves[(i + this.moveIndex) % 4].checks[j].x,
-          this.y + Elf.moves[(i + this.moveIndex) % 4].checks[j].y
-        );
+        if (this.x === 1 && this.y === 3 && i == 0) {
+          console.log(
+            this.x + Elf.moves[(i + this.moveIndex) % 4].checks[j].x,
+            this.y + Elf.moves[(i + this.moveIndex) % 4].checks[j].y
+          );
+        }
         if (
           this.board.tilesWithElves.has(
             `${this.x + Elf.moves[(i + this.moveIndex) % 4].checks[j].x}-${
@@ -96,10 +96,14 @@ class Elf {
             }`
           )
         ) {
-          continue;
+          relevantEmpty = false;
+          break;
         }
       }
-      this.proposedMovement = Elf.moves[(i + this.moveIndex) % 4].movement;
+      if (relevantEmpty) {
+        this.proposedMovement = Elf.moves[(i + this.moveIndex) % 4].movement;
+        break;
+      }
     }
   }
 }
@@ -114,6 +118,8 @@ for (let i = 0; i < commands.length; i++) {
   }
 }
 
-// console.log(board.tilesWithElves);
 board.askForMovementProposals();
-// console.log(board.elves.map((e) => e.proposedMovement));
+console.log(
+  board.elves.map((e) => ({ m: e.proposedMovement, x: e.x, y: e.y }))
+);
+console.log(board.tilesWithElves);
