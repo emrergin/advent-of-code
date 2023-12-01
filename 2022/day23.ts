@@ -3,7 +3,11 @@ const commands = readFileSync(`day23smalltest.txt`, "utf-8")
   .split("\r\n")
   .map((a) => a.split(""));
 
+type Coordinate = { x: number; y: number };
+
 class Board {
+  tilesWithElves: Set<string>;
+  elves: Elf[];
   constructor() {
     this.tilesWithElves = new Set();
     this.elves = [];
@@ -19,7 +23,13 @@ class Board {
 }
 
 class Elf {
-  constructor(x, y, board) {
+  x: number;
+  y: number;
+  moveIndex: number;
+  board: Board;
+  proposedMovement: null | Coordinate;
+
+  constructor(x: number, y: number, board: Board) {
     this.x = x;
     this.y = y;
     this.moveIndex = 0;
@@ -113,7 +123,7 @@ const board = new Board();
 for (let i = 0; i < commands.length; i++) {
   for (let j = 0; j < commands[0].length; j++) {
     if (commands[i][j] === "#") {
-      new Elf(i, j, board);
+      new Elf(j, i, board);
     }
   }
 }

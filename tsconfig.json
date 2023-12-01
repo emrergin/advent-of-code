@@ -1,0 +1,20 @@
+{
+  "extends": "@tsconfig/node16/tsconfig.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es6",
+    "noImplicitAny": true,
+    "moduleResolution": "Node16",
+    "sourceMap": true,
+    "baseUrl": ".",
+    "lib": ["dom", "es2023"],
+    "paths": {
+      "*": ["node_modules/*", "src/types/*"]
+    }
+  },
+  "include": ["2023/*", "2022/*"],
+  "ts-node": {
+    "esm": true
+  }
+}
