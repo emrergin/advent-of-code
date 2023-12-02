@@ -2,30 +2,26 @@ import { readFileSync } from "fs";
 const commands = readFileSync(`day2input.txt`, "utf-8")
   .split("\r\n")
   .map((a) =>
-    a.split(/\;|\:/).map((a) =>
-      a.split(",").map((b) => {
-        const c = b.trim().split(" ");
-        if (/\d+/.test(c[0])) {
+    a
+      .split(/\;|\:/)
+      .slice(1)
+      .map((a) =>
+        a.split(",").map((b) => {
+          const c = b.trim().split(" ");
           return { [c[1]]: Number(c[0]) };
-        } else {
-          return Number(c[1]);
-        }
-      })
-    )
+        })
+      )
   );
 
 function partOne() {
   const limits: Record<string, number> = { red: 12, green: 13, blue: 14 };
   function testCommand(
-    command: (
-      | number
-      | {
-          [x: string]: number;
-        }
-    )[][]
+    command: {
+      [x: string]: number;
+    }[][]
   ) {
     let valid = true;
-    const relevantPartOfCommand = command.slice(1) as {
+    const relevantPartOfCommand = command as {
       [x: string]: number;
     }[][];
     for (let subcommand of relevantPartOfCommand) {
@@ -51,16 +47,11 @@ function partOne() {
 
 function partTwo() {
   function getMinimumValuesForCommand(
-    command: (
-      | number
-      | {
-          [x: string]: number;
-        }
-    )[][]
-  ) {
-    const relevantPartOfCommand = command.slice(1) as {
+    command: {
       [x: string]: number;
-    }[][];
+    }[][]
+  ) {
+    const relevantPartOfCommand = command;
     const limits: Record<string, number> = { red: 0, green: 0, blue: 0 };
     for (let subcommand of relevantPartOfCommand) {
       subcommand.forEach((a) => {
