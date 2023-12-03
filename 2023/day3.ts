@@ -55,7 +55,7 @@ function partTwo() {
       (a) => a.index
     );
     for (let j = 0; j < allIndicesOfNumberStarts.length; j++) {
-      checkIfCounted(i, allIndicesOfNumberStarts[j] as number);
+      gearReader(i, allIndicesOfNumberStarts[j] as number);
     }
   }
   let total = 0;
@@ -66,7 +66,7 @@ function partTwo() {
   });
   console.log(total);
 
-  function checkIfCounted(yCor: number, index: number) {
+  function gearReader(yCor: number, index: number) {
     let currentX = index;
     let lassPass = 0;
     while (currentX < commands[0].length && lassPass < 2) {
