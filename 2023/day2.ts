@@ -13,13 +13,13 @@ const commands = readFileSync(`day2input.txt`, "utf-8")
       )
   );
 
+type SingleCommand = {
+  [x: string]: number;
+}[][];
+
 function partOne() {
   const limits: Record<string, number> = { red: 12, green: 13, blue: 14 };
-  function testCommand(
-    command: {
-      [x: string]: number;
-    }[][]
-  ) {
+  function testCommand(command: SingleCommand) {
     let valid = true;
     for (let subcommand of command) {
       subcommand.forEach((a) => {
@@ -43,11 +43,7 @@ function partOne() {
 }
 
 function partTwo() {
-  function getMinimumValuesForCommand(
-    command: {
-      [x: string]: number;
-    }[][]
-  ) {
+  function getMinimumValuesForCommand(command: SingleCommand) {
     const limits: Record<string, number> = { red: 0, green: 0, blue: 0 };
     for (let subcommand of command) {
       subcommand.forEach((a) => {
