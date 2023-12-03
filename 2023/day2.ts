@@ -21,10 +21,7 @@ function partOne() {
     }[][]
   ) {
     let valid = true;
-    const relevantPartOfCommand = command as {
-      [x: string]: number;
-    }[][];
-    for (let subcommand of relevantPartOfCommand) {
+    for (let subcommand of command) {
       subcommand.forEach((a) => {
         const key = Object.keys(a)[0];
         const relatedLimit = limits[key];
@@ -51,9 +48,8 @@ function partTwo() {
       [x: string]: number;
     }[][]
   ) {
-    const relevantPartOfCommand = command;
     const limits: Record<string, number> = { red: 0, green: 0, blue: 0 };
-    for (let subcommand of relevantPartOfCommand) {
+    for (let subcommand of command) {
       subcommand.forEach((a) => {
         const key = Object.keys(a)[0];
         const relatedLimit = limits[key];
