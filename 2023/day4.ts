@@ -27,12 +27,10 @@ function partOne() {
 }
 
 function partTwo() {
-  let commandsCopy: {
-    no: number | number[];
-    winners: number[];
-    numbers: number[];
-    quantity: number;
-  }[] = structuredClone(commands).map((a) => ({ ...a, quantity: 1 }));
+  let commandsCopy = structuredClone(commands).map((a) => ({
+    ...a,
+    quantity: 1,
+  }));
   for (let i = 0; i < commandsCopy.length; i++) {
     const command = commandsCopy[i];
     const currentHits = command.numbers.filter((number) =>
@@ -40,8 +38,7 @@ function partTwo() {
     ).length;
     if (currentHits > 0) {
       for (let j = i + 1; j <= i + currentHits; j++) {
-        commandsCopy[j].quantity =
-          commandsCopy[j].quantity + commandsCopy[i].quantity;
+        commandsCopy[j].quantity += commandsCopy[i].quantity;
       }
     }
   }
