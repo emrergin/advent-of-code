@@ -27,7 +27,7 @@ function partOne() {
 }
 
 function partTwo() {
-  let commandsCopy = structuredClone(commands).map((a) => ({
+  let commandsCopy = commands.map((a) => ({
     ...a,
     quantity: 1,
   }));
