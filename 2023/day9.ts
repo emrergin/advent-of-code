@@ -6,7 +6,6 @@ const commands = readFileSync(`day9input.txt`, "utf-8")
 function extrapolateCommand(command: number[], part: 1 | 2) {
   let currentCommand = command;
   const allCommands = [command];
-  console.log(command);
 
   while (currentCommand.some((a) => a !== 0)) {
     const tempArray: number[] = [];
@@ -40,7 +39,8 @@ function extrapolateCommand(command: number[], part: 1 | 2) {
 
 function partOne() {
   let total = 0;
-  for (let command of commands) {
+  const commandsCopy = structuredClone(commands);
+  for (let command of commandsCopy) {
     total += extrapolateCommand(command, 1);
   }
   console.log(total);
