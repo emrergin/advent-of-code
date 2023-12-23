@@ -57,8 +57,6 @@ function findDistance(a: Galaxy, b: Galaxy, multiplier = 1) {
     smallerX -
     smallerY;
 
-  // console.log(a, b, result);
-
   return result;
 }
 
