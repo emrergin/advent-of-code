@@ -15,78 +15,112 @@ function setCharAt(str: string, index: number, chr: string) {
   return str.substring(0, index) + chr + str.substring(index + 1);
 }
 
-function getNumberOfPossibilities(
-  command: [string, number[]],
-  mapOfPlacements: Map<string, number>
-): number {
-  const str = command[0];
-  const numbers = command[1];
-  const key = str + ":" + numbers.join("");
-  const num = command[1][0];
-  let result = mapOfPlacements.get(key);
-  if (result) {
-    mapOfPlacements.set(key, 0);
-    return result;
-  }
-  const morePounds = str.includes("#");
-  if (!morePounds && numbers.length === 0) {
-    mapOfPlacements.set(key, 1);
-    return 1;
-  }
-  if (morePounds && numbers.length === 0) {
-    mapOfPlacements.set(key, 0);
-    return 0;
-  }
+function getNumberOfPossibilities(command: [string, number[]]) {
+  const mapOfPlacements = new Map<string, number>();
 
-  if (str.length < numbers[numbers.length - 1]) {
-    mapOfPlacements.set(key, 0);
-    return 0;
-  }
+  const stack = [command];
+  while (stack.length > 0) {
+    const currentArguments = stack[stack.length - 1];
+    const str = currentArguments[0];
+    const numbers = currentArguments[1];
+    const num = currentArguments[1][0];
+    const key = str + ":" + numbers.join(",");
 
-  const sumOfRest = numbers.reduce((acc, curr) => acc + curr, 0);
-  const restOfDots = numbers.length - 1;
-  if (sumOfRest + restOfDots > str.length) {
-    mapOfPlacements.set(key, 0);
-    return 0;
-  }
-
-  if (str.charAt(0) === "_") {
-    let result = getNumberOfPossibilities(
-      [str.slice(1), numbers],
-      mapOfPlacements
-    );
-    mapOfPlacements.set(key, result);
-    return result;
-  } else if (str.charAt(0) === "x") {
-    const newStr = setCharAt(str, 0, "#");
-    let result =
-      getNumberOfPossibilities([str.slice(1), numbers], mapOfPlacements) +
-      getNumberOfPossibilities([newStr, numbers], mapOfPlacements);
-    mapOfPlacements.set(key, result);
-    return result;
-  } else {
-    let reg = new RegExp(`(#|x){${num}}(x|_)`);
-    if (str.slice(0, num + 1).match(reg)) {
-      let result = getNumberOfPossibilities(
-        [str.slice(num + 1), numbers.slice(1)],
-        mapOfPlacements
-      );
-      mapOfPlacements.set(key, result);
-      return result;
-    } else {
+    let prevResult = mapOfPlacements.get(key);
+    if (prevResult) {
+      mapOfPlacements.set(key, prevResult);
+      stack.pop();
+      continue;
+    }
+    const morePounds = str.includes("#");
+    if (!morePounds && numbers.length === 0) {
+      mapOfPlacements.set(key, 1);
+      stack.pop();
+      continue;
+    }
+    if (morePounds && numbers.length === 0) {
       mapOfPlacements.set(key, 0);
-      return 0;
+      stack.pop();
+      continue;
+    }
+    if (str.length < numbers[numbers.length - 1]) {
+      mapOfPlacements.set(key, 0);
+      stack.pop();
+      continue;
+    }
+
+    const sumOfRest = numbers.reduce((acc, curr) => acc + curr, 0);
+    const restOfDots = numbers.length - 1;
+    if (sumOfRest + restOfDots > str.length) {
+      mapOfPlacements.set(key, 0);
+      stack.pop();
+      continue;
+    }
+
+    if (str.charAt(0) === "_") {
+      const targetArray = [str.slice(1), numbers] as [string, number[]];
+      const targetKey = targetArray[0] + ":" + targetArray[1].join(",");
+      const targetValue = mapOfPlacements.get(targetKey);
+      if (targetValue !== undefined) {
+        mapOfPlacements.set(key, targetValue);
+        stack.pop();
+        continue;
+      } else {
+        stack.push(targetArray);
+        continue;
+      }
+    } else if (str.charAt(0) === "x") {
+      const newStr = setCharAt(str, 0, "#");
+      const targetArray1 = [newStr, numbers] as [string, number[]];
+      const targetArray2 = [str.slice(1), numbers] as [string, number[]];
+      const targetKey1 = targetArray1[0] + ":" + targetArray1[1].join(",");
+      const targetKey2 = targetArray2[0] + ":" + targetArray2[1].join(",");
+      const targetValue1 = mapOfPlacements.get(targetKey1);
+      const targetValue2 = mapOfPlacements.get(targetKey2);
+      if (targetValue1 !== undefined && targetValue2 !== undefined) {
+        mapOfPlacements.set(key, targetValue1 + targetValue2);
+        stack.pop();
+        continue;
+      }
+      if (targetValue1 === undefined) {
+        stack.push(targetArray1);
+      }
+      if (targetValue2 === undefined) {
+        stack.push(targetArray2);
+      }
+      continue;
+    } else {
+      const reg = new RegExp(`(#|x){${num}}(x|_)`);
+      if (str.slice(0, num + 1).match(reg)) {
+        const targetArray = [str.slice(num + 1), numbers.slice(1)] as [
+          string,
+          number[]
+        ];
+        const targetKey = targetArray[0] + ":" + targetArray[1].join(",");
+        const targetValue = mapOfPlacements.get(targetKey);
+        if (targetValue !== undefined) {
+          mapOfPlacements.set(key, targetValue);
+          stack.pop();
+          continue;
+        } else {
+          stack.push(targetArray);
+          continue;
+        }
+      } else {
+        mapOfPlacements.set(key, 0);
+        stack.pop();
+        continue;
+      }
     }
   }
+
+  return mapOfPlacements.get(command[0] + ":" + command[1].join(",")) as number;
 }
 
 function partOne() {
   let numberOfPos = 0;
-  for (let i = 0; i < commands.length; i++) {
-    const mapOfPlacements = new Map();
-    const number = getNumberOfPossibilities(commands[i], mapOfPlacements);
-
-    numberOfPos += number;
+  for (let command of commands) {
+    numberOfPos += getNumberOfPossibilities(command);
   }
   console.log(numberOfPos);
 }
@@ -103,16 +137,8 @@ function convertToPart2(command: [string, number[]]) {
 
 function partTwo() {
   let numberOfPos = 0;
-  let index = 0;
   for (let command of commands) {
-    index++;
-    const mapOfPlacements = new Map();
-    const number = getNumberOfPossibilities(
-      convertToPart2(command),
-      mapOfPlacements
-    );
-    numberOfPos += number;
-    console.log(index, number, command[1]);
+    numberOfPos += getNumberOfPossibilities(convertToPart2(command));
   }
   console.log(numberOfPos);
 }
