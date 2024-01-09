@@ -20,10 +20,8 @@ function partOne() {
   console.log(total);
 }
 
-// partOne();
-
 function partTwo() {
-  let arr: { label: string; fLen: number }[][] = [...Array(256)].map((e) => []);
+  let arr: { label: string; fLen: number }[][] = [...Array(256)].map(() => []);
   for (let command of commands) {
     const parsedCommand = parseCommand(command);
     const targetBox = hash(parsedCommand.label);
@@ -55,15 +53,17 @@ function partTwo() {
     }
   }
   console.log(total);
-}
-partTwo();
 
-function parseCommand(str: string) {
-  const regex = /(\w+)(=|-)(\d)?/;
-  const res = str.match(regex);
-  return {
-    label: res?.[1] as string,
-    sign: res?.[2] as "-" | "=",
-    fLen: Number(res?.[3]),
-  };
+  function parseCommand(str: string) {
+    const regex = /(\w+)(=|-)(\d)?/;
+    const res = str.match(regex);
+    return {
+      label: res?.[1] as string,
+      sign: res?.[2] as "-" | "=",
+      fLen: Number(res?.[3]),
+    };
+  }
 }
+
+partOne();
+partTwo();
