@@ -13,7 +13,6 @@ type Vertex = {
   x: number;
   y: number;
   cost: number;
-  pathSoFar: Direction[];
   lastDirections: [Direction, Direction, Direction];
   key: string;
   distance: number;
@@ -23,7 +22,6 @@ type Vertex = {
 };
 
 const vertexMap = new Map<string, Vertex>();
-const explored = new Set<string>();
 let vertices = new Heap<"mapkey">("mapkey");
 
 for (let i = 0; i < commands.length; i++) {
@@ -41,7 +39,6 @@ for (let i = 0; i < commands.length; i++) {
           const newVertex: Vertex = {
             key,
             lastDirections,
-            pathSoFar: [],
             x: i,
             y: j,
             cost: commands[i][j],
@@ -109,9 +106,7 @@ const startingVertex = vertexMap.get(
 startingVertex.distance = 0;
 startingVertex.tDistance = hCalculator(0, 0);
 
-const totalSize = commands.length * commands[0].length * 64;
-
-while (explored.size < totalSize) {
+while (vertices.length > 0) {
   if (vertices.length === 0) {
     break;
   }
@@ -120,7 +115,6 @@ while (explored.size < totalSize) {
   const currentVertex = vertexMap.get(currentKey);
   if (!currentVertex) continue;
   currentVertex.explored = true;
-  explored.add(currentVertex.key);
   if (
     currentVertex.x === commands.length - 1 &&
     currentVertex.y === commands[0].length - 1
@@ -135,10 +129,7 @@ while (explored.size < totalSize) {
       let indexToDelete = vertices.indices.get(neighbour.key);
 
       neighbour.distance = updatedDistance;
-      neighbour.pathSoFar = [
-        ...currentVertex.pathSoFar,
-        ...neighbour.lastDirections.slice(-1),
-      ];
+
       neighbour.tDistance =
         updatedDistance + hCalculator(neighbour.x, neighbour.y);
 
