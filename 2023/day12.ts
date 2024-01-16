@@ -26,12 +26,6 @@ function getNumberOfPossibilities(command: [string, number[]]) {
     const num = currentArguments[1][0];
     const key = str + ":" + numbers.join(",");
 
-    let prevResult = mapOfPlacements.get(key);
-    if (prevResult) {
-      mapOfPlacements.set(key, prevResult);
-      stack.pop();
-      continue;
-    }
     const morePounds = str.includes("#");
     if (!morePounds && numbers.length === 0) {
       mapOfPlacements.set(key, 1);
