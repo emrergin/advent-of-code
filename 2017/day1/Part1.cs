@@ -9,9 +9,7 @@ using System.IO;
 namespace _2017.day1
 {
     public class Part1
-
     {
-
         public static void Solve()
         {
             string input = _2017.Utilities.ReadLine(1);
@@ -26,11 +24,8 @@ namespace _2017.day1
                 }
             }
             Console.WriteLine(total);
-
         }
     }
-
-
 }
 
 
