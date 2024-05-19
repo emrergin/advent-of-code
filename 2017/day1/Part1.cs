@@ -14,7 +14,7 @@ namespace _2017.day1
 
         public static void Solve()
         {
-            string input = _2017.Utilities.ReadLine();
+            string input = _2017.Utilities.ReadLine(1);
             int length = input.Length;
             int total = 0;
             for (int i = 0; i < length; i++)

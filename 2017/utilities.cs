@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,13 +9,13 @@ namespace _2017
 {
     public static class Utilities
     {
-        public static string ReadLine()
+        public static string ReadLine(int day)
         {
             string? line = null;
             try
             {
                 //Pass the file path and file name to the StreamReader constructor
-                StreamReader sr = new("./day1/input.txt");
+                StreamReader sr = new("./day"+day+"/input.txt");
                 line = sr.ReadLine();
 
                 //close the file
@@ -34,6 +35,14 @@ namespace _2017
                 throw new Exception("Some mistake with the input file.");
             }
 
+        }
+
+        public static int[][] ReadArrayOfNumbers(int day)
+        {
+            string[] lines = File.ReadAllLines("./day" + day + "/input.txt");
+            string[][] lines2 = Array.ConvertAll(lines, line => line.Split());
+            int[][] lines3 = Array.ConvertAll(lines2, line => Array.ConvertAll(line,int.Parse));
+            return lines3;
         }
     }
 }
