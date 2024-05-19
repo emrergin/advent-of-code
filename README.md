@@ -14,6 +14,7 @@
 - I used this challenge to learn Java! Check out: https://github.com/emrergin/advent-of-code/tree/main/2018
 - While typing my custom Heap structure, I realized that intersection types do not override duplicate property types, instead require them to be compatible.
 - 2023 day 17 includes my first implementation of A-star algorithm. I implemented Dijkstra before, [here](https://github.com/emrergin/practice_codes/blob/main/part2/dijkstra.js), but not for graphs with arbitrary constraints.
+- I used this challenge to learn C#! Check out: https://github.com/emrergin/advent-of-code/tree/main/2017
 
 ### Influences
 

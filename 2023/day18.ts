@@ -23,6 +23,21 @@ const directions = {
   U: [-1, 0],
 };
 
+const conjunctions = {
+  UL: "7",
+  UR: "F",
+  UU: "|",
+  DL: "J",
+  DR: "L",
+  DD: "|",
+  LU: "L",
+  LL: "-",
+  LD: "F",
+  RU: "J",
+  RR: "-",
+  RD: "7",
+};
+
 function part(
   commands: {
     direction: "R" | "L" | "U" | "D";
@@ -108,19 +123,159 @@ function part(
   );
 }
 
-part(commands);
-part(commands2);
-// for (let i = minimumX - 1; i <= maximumX + 1; i++) {
-// pointSet.size
-//   let row = "";
-//   for (let j = minimumY - 2; j <= maximumY + 2; j++) {
-//     if (pointSet.has(`${i}|${j}`)) {
-//       row += "#";
-//     } else if (explored.has(`${i}|${j}`)) {
-//       row += "^";
-//     } else {
-//       row += ".";
-//     }
-//   }
-//   console.log(row);
-// }
+function part2(
+  commands: {
+    direction: "R" | "L" | "U" | "D";
+    amount: number;
+  }[]
+) {
+  let cornerPositions: [number, number][] = [[0, 0]];
+  let pathDistance = commands.reduce((acc, curr) => acc + curr.amount, 0);
+
+  const pointArray: { character: string; index: number }[][] = [];
+
+  for (let j = 0; j < commands.length; j++) {
+    let command = commands[j];
+    // for (let i = 0; i < command.amount; i++) {
+    let currentPoint = cornerPositions[cornerPositions.length - 1];
+    let nextCorner = [
+      currentPoint[0] + directions[command.direction][0] * command.amount,
+      currentPoint[1] + directions[command.direction][1] * command.amount,
+    ];
+    cornerPositions.push(nextCorner as [number, number]);
+
+    let nextIndex = j + 1;
+    if (j === commands.length - 1) {
+      nextIndex = 0;
+    }
+
+    const nextDirection = commands[nextIndex].direction;
+    let directionKey = command.direction + nextDirection;
+
+    const character = conjunctions[directionKey as keyof typeof conjunctions];
+    const existingArray = pointArray[nextCorner[0]];
+    if (existingArray) {
+      // existingArray[nextCorner[1]] = character;
+      existingArray.push({ character, index: nextCorner[1] });
+    } else {
+      pointArray[nextCorner[0]] = [];
+      pointArray[nextCorner[0]].push({ character, index: nextCorner[1] });
+    }
+    // pointMap.set(`${nextCorner[0]}|${nextCorner[1]}`, character);
+    // }
+    // pointSet.add(`${nextPoint[0]}|${nextPoint[1]}`);
+  }
+
+  const minimumX = cornerPositions.reduce(
+    (acc, curr) => Math.min(acc, curr[0]),
+    Number.MAX_SAFE_INTEGER
+  );
+  const maximumX = cornerPositions.reduce(
+    (acc, curr) => Math.max(acc, curr[0]),
+    Number.MIN_SAFE_INTEGER
+  );
+  const minimumY = cornerPositions.reduce(
+    (acc, curr) => Math.min(acc, curr[1]),
+    Number.MAX_SAFE_INTEGER
+  );
+  const maximumY = cornerPositions.reduce(
+    (acc, curr) => Math.max(acc, curr[1]),
+    Number.MIN_SAFE_INTEGER
+  );
+
+  let insidePoints = 0;
+  console.log(minimumX, maximumX, minimumY, maximumY);
+  console.log(pointArray);
+  // let beforePoints = 0;
+  let increaseForThisRow = 0;
+  for (let i = minimumX; i <= maximumX; i++) {
+    if (i % 10000 === 0) console.log(i);
+    if (
+      i >= 1 &&
+      pointArray[i] === undefined &&
+      pointArray[i - 1] === undefined
+    ) {
+      insidePoints += increaseForThisRow;
+      continue;
+    }
+    // beforePoints = insidePoints;
+    increaseForThisRow = 0;
+    for (let j = minimumY; j <= maximumY; j++) {
+      let string = "";
+      let last = null;
+      for (let k = minimumY; k <= j; k++) {
+        last = checkVerticalHorizontalOrNone(i, k, cornerPositions, pointArray);
+        if (last !== "-" && last !== ".") {
+          string += last;
+        }
+      }
+
+      let simplifiedPath = string;
+
+      if (j === maximumY) {
+        // console.log(string);
+      }
+      let beginning = null;
+      while (beginning !== simplifiedPath) {
+        beginning = simplifiedPath;
+        simplifiedPath = simplifiedPath.replace(/\-/g, "");
+        simplifiedPath = simplifiedPath.replace(/F7/g, "");
+        simplifiedPath = simplifiedPath.replace(/LJ/g, "");
+        simplifiedPath = simplifiedPath.replace(/FJ/g, "|");
+        simplifiedPath = simplifiedPath.replace(/L7/g, "|");
+        simplifiedPath = simplifiedPath.replace(/\|\|/g, "");
+        simplifiedPath = simplifiedPath.replace(/\.+/g, ".");
+      }
+
+      if (
+        simplifiedPath.split("").filter((a) => a === "|").length % 2 === 1 &&
+        last === "."
+      ) {
+        // console.log(string, i, j);
+        // lastIncrease = insidePoints++;
+        increaseForThisRow++;
+      }
+    }
+    insidePoints += increaseForThisRow;
+  }
+  console.log(insidePoints + pathDistance);
+  // console.log(insidePoints);
+}
+
+// part(commands);
+part2(commands);
+
+function checkVerticalHorizontalOrNone(
+  x: number,
+  y: number,
+  cornerPositions: [number, number][],
+  pointMap: { character: string; index: number }[][]
+) {
+  const valueFromMap = pointMap[x]?.find((a) => a.index === y);
+  if (valueFromMap) {
+    return valueFromMap.character;
+  }
+
+  for (let i = 0; i < cornerPositions.length - 1; i++) {
+    const point1 = cornerPositions[i];
+    const point2 = cornerPositions[i + 1];
+
+    if (point1[0] === point2[0]) {
+      if (
+        x === point1[0] &&
+        Math.sign(y - point1[1]) === -Math.sign(y - point2[1])
+      ) {
+        return "-";
+      }
+    }
+    if (point1[1] === point2[1]) {
+      if (
+        y === point1[1] &&
+        Math.sign(x - point1[0]) === -Math.sign(x - point2[0])
+      ) {
+        return "|";
+      }
+    }
+  }
+  return ".";
+}
