@@ -44,5 +44,12 @@ namespace _2017
             int[][] lines3 = Array.ConvertAll(lines2, line => Array.ConvertAll(line,int.Parse));
             return lines3;
         }
+
+        public static int ReadSingleNumber(int day)
+        {
+            string[] lines = File.ReadAllLines("./day" + day + "/input.txt");
+            int[] lines2 = Array.ConvertAll(lines, int.Parse);
+            return lines2[0];
+        }
     }
 }

@@ -15,7 +15,6 @@ namespace _2017.day2
         public static void Solve()
         {
             int[][] input = _2017.Utilities.ReadArrayOfNumbers(2);
-            //Console.WriteLine(input);
             int total = 0;
 
             foreach (var item in input)
