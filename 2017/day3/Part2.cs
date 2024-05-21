@@ -42,104 +42,29 @@ namespace _2017.day3
             return 0;
         }
 
-        internal static Point GoTop(Point point)
-        {
-            int currentX = point.X;
-            int currentY = point.Y;
-
-            if (loopBroken)
-            {
-                return new Point(currentX, currentY);
-            }
-
-            do
-            {
-                currentY--;
-                AddCell(currentX, currentY);
-            } while (cells.ContainsKey(new Point(currentX - 1, currentY))&&!loopBroken);
-
-            return new Point(currentX, currentY);
-        }
-
-        internal static Point GoLeft(Point point)
-        {
-            int currentX = point.X;
-            int currentY = point.Y;
-
-            if (loopBroken)
-            {
-                return new Point(currentX, currentY);
-            }
-
-            do
-            {
-                currentX--;
-                AddCell(currentX, currentY);
-            } while (cells.ContainsKey(new Point(currentX, currentY+1)) && !loopBroken);
-
-            return new Point(currentX, currentY);
-        }
-
-        internal static Point GoBottom(Point point)
-        {
-            int currentX = point.X;
-            int currentY = point.Y;
-
-            if (loopBroken)
-            {
-                return new Point(currentX, currentY);
-            }
-
-            do
-            {
-                currentY++;
-                AddCell(currentX, currentY);
-            } while (cells.ContainsKey(new Point(currentX + 1, currentY)) && !loopBroken);
-
-            return new Point(currentX, currentY);
-        }
-
-        internal static Point GoRight(Point point)
-        {
-            int currentX = point.X;
-            int currentY = point.Y;
-
-            if (loopBroken)
-            {
-                return new Point(currentX, currentY);
-            }
-
-            do
-            {
-                currentX++;
-                AddCell(currentX, currentY);
-            } while (cells.ContainsKey(new Point(currentX, currentY-1)) && !loopBroken);
-
-            return new Point(currentX, currentY);
-        }
-
 
         internal static Point GoDirection(Point point, string direction)
         {
+            if (direction != "left" && direction != "right" && direction != "down" && direction != "up")
+            {
+                throw new ArgumentException("direction", "Unacceptable value of direction");
+            }
             int currentX = point.X;
             int currentY = point.Y;
 
-            int xStepToMove = direction=="right"? 1: direction=="left"? -1: 0;
+            int xStepToMove = direction == "right" ? 1 : direction == "left" ? -1 : 0;
             int yStepToMove = direction == "down" ? 1 : direction == "up" ? -1 : 0;
-            int xStepToCheck = direction == "up" ? 1 : direction == "down" ? -1 : 0;
+            int xStepToCheck = direction == "up" ? -1 : direction == "down" ? 1 : 0;
             int yStepToCheck = direction == "left" ? 1 : direction == "right" ? -1 : 0;
 
-            if (loopBroken)
-            {
-                return new Point(currentX, currentY);
-            }
+            if (loopBroken) return new Point(currentX, currentY);
 
             do
             {
                 currentX += xStepToMove;
                 currentY += yStepToMove;
                 AddCell(currentX, currentY);
-            } while (cells.ContainsKey(new Point(currentX+ xStepToCheck, currentY + yStepToCheck)) && !loopBroken);
+            } while (cells.ContainsKey(new Point(currentX + xStepToCheck, currentY + yStepToCheck)) && !loopBroken);
 
             return new Point(currentX, currentY);
         }
@@ -152,18 +77,13 @@ namespace _2017.day3
             AddCell(0, 0);
             AddCell(1, 0);
             Point afterMovement = new Point(1, 0);
+
             while (!loopBroken)
             {
-                afterMovement = GoTop(afterMovement);
-                afterMovement = GoLeft(afterMovement);
-                afterMovement = GoBottom(afterMovement);
-                afterMovement = GoRight(afterMovement);
-            }
-
-
-            foreach (var res in cells)
-            {
-                Console.WriteLine("key {0}: x = {1}, y = {2}, value = {3}", res.Key, res.Value.x, res.Value.y, res.Value.value);
+                afterMovement = GoDirection(afterMovement, "up");
+                afterMovement = GoDirection(afterMovement, "left");
+                afterMovement = GoDirection(afterMovement, "down");
+                afterMovement = GoDirection(afterMovement, "right");
             }
         }
     }
