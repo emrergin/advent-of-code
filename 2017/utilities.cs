@@ -39,10 +39,16 @@ namespace _2017
 
         public static int[][] ReadArrayOfNumbers(int day)
         {
-            string[] lines = File.ReadAllLines("./day" + day + "/input.txt");
-            string[][] lines2 = Array.ConvertAll(lines, line => line.Split());
+            string[][] lines2 = ReadArrayOfStrings(3);
             int[][] lines3 = Array.ConvertAll(lines2, line => Array.ConvertAll(line,int.Parse));
             return lines3;
+        }
+
+        public static string[][] ReadArrayOfStrings(int day)
+        {
+            string[] lines = File.ReadAllLines("./day" + day + "/input.txt");
+            string[][] lines2 = Array.ConvertAll(lines, line => line.Split());
+            return lines2;
         }
 
         public static int ReadSingleNumber(int day)
