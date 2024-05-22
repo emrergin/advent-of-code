@@ -44,6 +44,13 @@ namespace _2017
             return lines3;
         }
 
+        public static int[] ReadListOfNumbers(int day)
+        {
+            string[] lines = File.ReadAllLines("./day" + day + "/input.txt");
+            int[] lines2 = Array.ConvertAll(lines, int.Parse);
+            return lines2;
+        }
+
         public static string[][] ReadArrayOfStrings(int day)
         {
             string[] lines = File.ReadAllLines("./day" + day + "/input.txt");
@@ -53,9 +60,7 @@ namespace _2017
 
         public static int ReadSingleNumber(int day)
         {
-            string[] lines = File.ReadAllLines("./day" + day + "/input.txt");
-            int[] lines2 = Array.ConvertAll(lines, int.Parse);
-            return lines2[0];
+            return ReadListOfNumbers(day)[0];
         }
     }
 }
