@@ -39,7 +39,7 @@ namespace _2017
 
         public static int[][] ReadArrayOfNumbers(int day)
         {
-            string[][] lines2 = ReadArrayOfStrings(3);
+            string[][] lines2 = ReadArrayOfStrings(day);
             int[][] lines3 = Array.ConvertAll(lines2, line => Array.ConvertAll(line,int.Parse));
             return lines3;
         }
