@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Xml.Linq;
 
 namespace _2017.day7
@@ -8,11 +9,10 @@ namespace _2017.day7
     {
 
         internal static Dictionary<string, Program> programs = [];
-        public class Program(string name, string[] programsAbove, string? parent, int weight = 0)
+        public class Program(string name, string[] programsAbove, string? parent)
         {
-            internal string name  = name;
+            internal string  name  = name;
             internal string[] programsAbove = programsAbove;
-            internal int weight  = weight;
             internal string? parent  = parent;
         }
 
