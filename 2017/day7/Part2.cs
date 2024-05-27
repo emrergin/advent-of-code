@@ -7,9 +7,7 @@ namespace _2017.day7
         internal static Dictionary<string, Program2> programs = [];
         public class Program2(string name, string[] programsAbove, string? parent, int w) : Part1.Program(name, programsAbove, parent)
         {
-            [JsonInclude]
             internal int individualWeight = w;
-            [JsonInclude]
             internal int allWeightSupported = w;
 
             internal void Carry()
