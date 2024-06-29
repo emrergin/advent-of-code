@@ -1,2 +1,2 @@
 ﻿
-_2017.day13.Part1.Solve();
+_2017.day13.Part2.Solve();

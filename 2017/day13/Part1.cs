@@ -10,7 +10,6 @@ namespace _2017.day13
 {
     internal class Part1
     {
-        static readonly Dictionary<int, Layer> allLayers = [];
         internal class Layer(int range)
         {
             public int range = range;
@@ -26,20 +25,24 @@ namespace _2017.day13
                 scannerPosition += scannerDirection;
             }
         }
-        public static void Solve()
+        public static Dictionary<int, Layer> CreateStartingLayers()
         {
             var lines = Utilities.ReadArrayOfStrings(13);
-            int lastLayer = 0;
+            Dictionary<int, Layer> allLayers = [];
             foreach (var line in lines)
             {
                 int currentDepth = int.Parse(line[0].Remove(line[0].Length - 1));
                 Layer layer = new(int.Parse(line[1]));
                 allLayers[currentDepth] = layer;
-                lastLayer = currentDepth;
             }
-
+            return allLayers;
+        }
+        public static void Solve()
+        {
+            Dictionary<int, Layer> allLayers = CreateStartingLayers();
             int locationOfPacket = -1;
             int severity = 0;
+            int lastLayer = allLayers.Keys.Max();
             while (locationOfPacket < lastLayer + 1)
             {
                 locationOfPacket++;
