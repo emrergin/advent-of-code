@@ -22,10 +22,10 @@ namespace _2017.day10
 
             return String.Join("", denseHashHex).ToLower();
         }
-        public static void Solve()
+
+        public static string KnotHash(char[] key)
         {
-            char[] line = Utilities.ReadLine(10).ToCharArray();
-            int[] numbers = Array.ConvertAll(line, n => (int)n).Concat([17, 31, 73, 47, 23]).ToArray();
+            int[] numbers = Array.ConvertAll(key, n => (int)n).Concat([17, 31, 73, 47, 23]).ToArray();
             int currentPosition = 0;
             int skipSize = 0;
             int length = 0;
@@ -51,8 +51,13 @@ namespace _2017.day10
                     skipSize++;
                 }
             }
-            Console.WriteLine(Densify(list));
-           
+
+            return Densify(list);
+        }
+        public static void Solve()
+        {
+            char[] line = Utilities.ReadLine(10).ToCharArray();            
+            Console.WriteLine(KnotHash(line));           
         }
     }
 }

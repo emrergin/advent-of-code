@@ -5,7 +5,7 @@ namespace _2017.day12
 {
     internal class Part2
     {
-        static Dictionary<string, Part1.UnionFind> allNodes = [];
+        static Dictionary<string, DataStructures.UnionFind> allNodes = [];
 
        
         public static void Solve()
