@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace _2017.day15
 {
@@ -12,16 +11,15 @@ namespace _2017.day15
     {
         internal static uint Generate(uint prev, int factor)
         {
-            Int64 newValue = prev * factor;
-            return (uint)(newValue % 2147483647);
+            return (uint)(prev * factor % 2147483647);
         }
-        internal static string GetLast16Bits(uint value)
+        public static string GetLast16Bits(uint value)
         {
             return Convert.ToString(value, 2).PadLeft(16, '0')[^16..];
         }
         public static void Solve()
         {
-            uint[] numbers = Array.ConvertAll(Utilities.ReadListOfNumbers(15), val => (uint)val);
+            uint[] numbers = Array.ConvertAll(Utilities.ReadArrayOfStrings(15), val => (uint)int.Parse(val[4]));
             int numberOfEquals = 0;
             for (int i = 0; i < 40000000; i++)
             {
