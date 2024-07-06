@@ -60,7 +60,7 @@ namespace _2017.day18
                 if (allRegisters.TryGetValue(registerTag, out Register? relatedRegister))
                 {
                 }
-                else
+                else if (!Char.IsDigit(registerTag))
                 {
                     relatedRegister = new Register();
                     allRegisters[registerTag] = relatedRegister;
@@ -69,29 +69,29 @@ namespace _2017.day18
                 switch (command[0])
                 {
                     case "snd":
-                        relatedRegister.Play();
-                        lastPlayed = relatedRegister.value;
+                        relatedRegister?.Play();
+                        lastPlayed = relatedRegister?.value ?? 0;
                         index++;
                         break;
                     case "set":
-                        relatedRegister.Set(GetValue(command[2], allRegisters));
+                        relatedRegister?.Set(GetValue(command[2], allRegisters));
                         index++;
                         break;
                     case "add":
-                        relatedRegister.Add(GetValue(command[2], allRegisters));
+                        relatedRegister?.Add(GetValue(command[2], allRegisters));
                         index++;
                         break;
                     case "mul":
                         
-                        relatedRegister.Multiply(GetValue(command[2], allRegisters));
+                        relatedRegister?.Multiply(GetValue(command[2], allRegisters));
                         index++;
                         break;
                     case "mod":
-                        relatedRegister.Mod(GetValue(command[2], allRegisters));
+                        relatedRegister?.Mod(GetValue(command[2], allRegisters));
                         index++;
                         break;
                     case "rcv":
-                        if (relatedRegister.value != 0)
+                        if (relatedRegister!=null && relatedRegister.value != 0)
                         {
                             Console.WriteLine(lastPlayed);
                             goto End;
@@ -103,7 +103,7 @@ namespace _2017.day18
                         break;
                     case "jgz":
                         {
-                            if (relatedRegister.value > 0)
+                            if (GetValue(command[1], allRegisters) > 0)
                             {
                                 index += (int)GetValue(command[2], allRegisters);
                                 if ( index < 0)
