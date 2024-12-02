@@ -13,7 +13,7 @@
       "*": ["node_modules/*", "src/types/*"]
     }
   },
-  "include": ["2023/*", "2022/*"],
+  "include": ["2023/*", "2022/*", "2024/*"],
   "ts-node": {
     "esm": true
   }
