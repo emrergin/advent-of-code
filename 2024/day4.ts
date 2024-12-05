@@ -22,22 +22,19 @@ function partOne() {
   ) {
     let currentPosition = startPosition;
     for (let i = 0; i < 4; i++) {
-      if (commands[currentPosition[0]][currentPosition[1]] !== letters[i]) {
+      if (
+        currentPosition[0] >= commands.length ||
+        currentPosition[0] < 0 ||
+        currentPosition[1] >= commands[0].length ||
+        currentPosition[1] < 0 ||
+        commands[currentPosition[0]][currentPosition[1]] !== letters[i]
+      ) {
         return false;
       }
       currentPosition = [
         currentPosition[0] + step[0],
         currentPosition[1] + step[1],
       ];
-      if (
-        (currentPosition[0] >= commands.length ||
-          currentPosition[0] < 0 ||
-          currentPosition[1] >= commands[0].length ||
-          currentPosition[1] < 0) &&
-        i !== 3
-      ) {
-        return false;
-      }
     }
     return true;
   }
