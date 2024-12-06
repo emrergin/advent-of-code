@@ -14,3 +14,13 @@ export function catchCycle(array: string[]) {
   }
   return { length: 0, start: null };
 }
+
+export function printMap(array: string[][]) {
+  for (let i = 0; i < array.length; i++) {
+    let currentLine = "";
+    for (let j = 0; j < array[0].length; j++) {
+      currentLine += array[i][j];
+    }
+    console.log(currentLine);
+  }
+}
