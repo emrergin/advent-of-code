@@ -1,6 +1,6 @@
 # Advent Of Code Solutions
 
-[Advent of Code](https://adventofcode.com/) Solutions, done using Javascript, Typescript and C#. Written to be run by Nodejs.
+[Advent of Code](https://adventofcode.com/) Solutions, done using Javascript, Typescript and C# and Java.
 
 ### What I learned
 

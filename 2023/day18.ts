@@ -136,7 +136,6 @@ function part2(
 
   for (let j = 0; j < commands.length; j++) {
     let command = commands[j];
-    // for (let i = 0; i < command.amount; i++) {
     let currentPoint = cornerPositions[cornerPositions.length - 1];
     let nextCorner = [
       currentPoint[0] + directions[command.direction][0] * command.amount,
@@ -155,15 +154,11 @@ function part2(
     const character = conjunctions[directionKey as keyof typeof conjunctions];
     const existingArray = pointArray[nextCorner[0]];
     if (existingArray) {
-      // existingArray[nextCorner[1]] = character;
       existingArray.push({ character, index: nextCorner[1] });
     } else {
       pointArray[nextCorner[0]] = [];
       pointArray[nextCorner[0]].push({ character, index: nextCorner[1] });
     }
-    // pointMap.set(`${nextCorner[0]}|${nextCorner[1]}`, character);
-    // }
-    // pointSet.add(`${nextPoint[0]}|${nextPoint[1]}`);
   }
 
   const minimumX = cornerPositions.reduce(
@@ -184,12 +179,8 @@ function part2(
   );
 
   let insidePoints = 0;
-  console.log(minimumX, maximumX, minimumY, maximumY);
-  console.log(pointArray);
-  // let beforePoints = 0;
   let increaseForThisRow = 0;
   for (let i = minimumX; i <= maximumX; i++) {
-    if (i % 10000 === 0) console.log(i);
     if (
       i >= 1 &&
       pointArray[i] === undefined &&
@@ -198,7 +189,6 @@ function part2(
       insidePoints += increaseForThisRow;
       continue;
     }
-    // beforePoints = insidePoints;
     increaseForThisRow = 0;
     for (let j = minimumY; j <= maximumY; j++) {
       let string = "";
@@ -212,9 +202,6 @@ function part2(
 
       let simplifiedPath = string;
 
-      if (j === maximumY) {
-        // console.log(string);
-      }
       let beginning = null;
       while (beginning !== simplifiedPath) {
         beginning = simplifiedPath;
@@ -231,18 +218,14 @@ function part2(
         simplifiedPath.split("").filter((a) => a === "|").length % 2 === 1 &&
         last === "."
       ) {
-        // console.log(string, i, j);
-        // lastIncrease = insidePoints++;
         increaseForThisRow++;
       }
     }
     insidePoints += increaseForThisRow;
   }
   console.log(insidePoints + pathDistance);
-  // console.log(insidePoints);
 }
 
-// part(commands);
 part2(commands);
 
 function checkVerticalHorizontalOrNone(

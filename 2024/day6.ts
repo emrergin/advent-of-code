@@ -68,6 +68,15 @@ function partOne() {
 
 function partTwo() {
   let count = 0;
+  let startingPosition = [-1, -1];
+
+  for (let i = 0; i < commands.length; i++) {
+    for (let j = 0; j < commands[0].length; j++) {
+      if (commands[i][j] === "^") {
+        startingPosition = [i, j];
+      }
+    }
+  }
 
   for (let i = 0; i < commands.length; i++) {
     for (let j = 0; j < commands[0].length; j++) {
@@ -81,18 +90,10 @@ function partTwo() {
 
         let state: GuardState = {
           currentDirection: 0,
-          currentPosition: [-1, -1],
+          currentPosition: [startingPosition[0], startingPosition[1]],
           count: 1,
           outOfBounds: false,
         };
-
-        for (let i = 0; i < commands.length; i++) {
-          for (let j = 0; j < commands[0].length; j++) {
-            if (commands[i][j] === "^") {
-              state.currentPosition = [i, j];
-            }
-          }
-        }
 
         while (!state.outOfBounds) {
           let previousDirection = state.currentDirection;
