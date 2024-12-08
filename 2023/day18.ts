@@ -181,6 +181,7 @@ function part2(
   let insidePoints = 0;
   let increaseForThisRow = 0;
   for (let i = minimumX; i <= maximumX; i++) {
+    console.log(i, "/", maximumX);
     if (
       i >= 1 &&
       pointArray[i] === undefined &&
@@ -226,7 +227,7 @@ function part2(
   console.log(insidePoints + pathDistance);
 }
 
-part2(commands);
+part2(commands2);
 
 function checkVerticalHorizontalOrNone(
   x: number,
