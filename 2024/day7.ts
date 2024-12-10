@@ -25,7 +25,7 @@ function isToBePrunned(
     for (let i = 0; i < remainingValues.length; i++) {
       cV = Math.max(
         part === 1
-          ? Number.MAX_SAFE_INTEGER
+          ? Number.MIN_SAFE_INTEGER
           : Number(`${cV}${remainingValues[i]}`),
         cV * remainingValues[i],
         cV + remainingValues[i]
