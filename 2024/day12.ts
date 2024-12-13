@@ -1,4 +1,5 @@
 import { readFileSync } from "fs";
+import { UnionFind } from "../utilities/helpers.js";
 const commands = readFileSync(`day12input.txt`, "utf-8")
   .split("\r\n")
   .map((a) => a.split(""));
@@ -11,37 +12,20 @@ const directions = [
 ];
 
 function generateRegions() {
-  const nodeMap = new Map<string, UnionFind>();
-  class UnionFind {
-    x: number;
-    y: number;
+  const nodeMap = new Map<string, UnionFindRegion>();
+  class UnionFindRegion extends UnionFind {
     cells: [number, number][];
     tag: string;
-    size: number;
-    parent: null | UnionFind;
-    name: string;
     fences: number;
     fenceCoordinates: [number, number][];
 
     constructor(x: number, y: number, tag: string) {
-      this.x = x;
-      this.y = y;
+      super(nodeMap, `${x}|${y}`);
       this.cells = [[x, y]];
       this.tag = tag;
-      this.size = 1;
-      this.fences = 0;
-      this.parent = null;
-      this.name = `${x}|${y}`;
-      nodeMap.set(`${x}|${y}`, this);
-      this.fenceCoordinates = [];
-    }
 
-    find() {
-      let currentNode = this;
-      while (currentNode.parent) {
-        currentNode = currentNode.parent as any;
-      }
-      return currentNode.name;
+      this.fences = 0;
+      this.fenceCoordinates = [];
     }
 
     static union(el1: UnionFind, el2: UnionFind) {
@@ -60,31 +44,6 @@ function generateRegions() {
           finalParent1.parent = finalParent2;
           finalParent2.size += finalParent1.size;
           finalParent2.cells = [...finalParent2.cells, ...finalParent1.cells];
-        }
-      }
-    }
-
-    addFences() {
-      for (let i = 0; i < this.cells.length; i++) {
-        let currentCell = nodeMap.get(
-          `${this.cells[i][0]}|${this.cells[i][1]}`
-        );
-        for (let j = 0; j < directions.length; j++) {
-          let targetNode = nodeMap.get(
-            `${this.cells[i][0] + directions[j][0]}|${
-              this.cells[i][1] + directions[j][1]
-            }`
-          );
-          if (
-            targetNode &&
-            currentCell &&
-            currentCell.find() !== targetNode.find()
-          ) {
-            this.fences = this.fences + 1;
-          }
-          if (targetNode === undefined) {
-            this.fences = this.fences + 1;
-          }
         }
       }
     }
@@ -121,29 +80,24 @@ function generateRegions() {
 
   for (let i = 0; i < commands.length; i++) {
     for (let j = 0; j < commands[0].length; j++) {
-      new UnionFind(i, j, commands[i][j]);
+      new UnionFindRegion(i, j, commands[i][j]);
     }
   }
 
-  let mergedInCurrentCycle = true;
-  while (mergedInCurrentCycle) {
-    mergedInCurrentCycle = false;
-    for (let i = 0; i < commands.length; i++) {
-      for (let j = 0; j < commands[0].length; j++) {
-        let currentCell = nodeMap.get(`${i}|${j}`);
-        for (let k = 0; k < directions.length; k++) {
-          let targetNode = nodeMap.get(
-            `${i + directions[k][0]}|${j + directions[k][1]}`
-          );
-          if (
-            targetNode &&
-            currentCell &&
-            currentCell?.tag === targetNode?.tag &&
-            targetNode.find() !== currentCell.find()
-          ) {
-            UnionFind.union(targetNode, currentCell);
-            mergedInCurrentCycle = true;
-          }
+  for (let i = 0; i < commands.length; i++) {
+    for (let j = 0; j < commands[0].length; j++) {
+      let currentCell = nodeMap.get(`${i}|${j}`);
+      for (let k = 0; k < directions.length; k++) {
+        let targetNode = nodeMap.get(
+          `${i + directions[k][0]}|${j + directions[k][1]}`
+        );
+        if (
+          targetNode &&
+          currentCell &&
+          currentCell?.tag === targetNode?.tag &&
+          targetNode.find() !== currentCell.find()
+        ) {
+          UnionFindRegion.union(targetNode, currentCell);
         }
       }
     }
@@ -161,9 +115,10 @@ function partOne() {
     if (!checkedSet.has(relevantKey)) {
       checkedSet.add(relevantKey);
       let relevantParent = nodeMap.get(relevantKey);
-      relevantParent?.addFences();
+      relevantParent?.addFenceWithCoordinates();
       if (relevantParent) {
-        priceTotal += relevantParent?.size * relevantParent.fences;
+        priceTotal +=
+          relevantParent?.size * relevantParent.fenceCoordinates.length;
       }
     }
   }
@@ -171,51 +126,6 @@ function partOne() {
 }
 
 function partTwo() {
-  class UnionFind2 {
-    x: number;
-    y: number;
-    size: number;
-    parent: null | UnionFind2;
-    name: string;
-    fenceMap: Map<string, UnionFind2>;
-
-    constructor(x: number, y: number, fenceMap: Map<string, UnionFind2>) {
-      this.x = x;
-      this.y = y;
-      this.size = 1;
-      this.parent = null;
-      this.name = `${x}|${y}`;
-      this.fenceMap = fenceMap;
-      this.fenceMap.set(`${x}|${y}`, this);
-    }
-
-    find() {
-      let currentNode = this;
-      while (currentNode.parent) {
-        currentNode = currentNode.parent as any;
-      }
-      return currentNode.name;
-    }
-
-    static union(el1: UnionFind2, el2: UnionFind2) {
-      let tag1 = el1.find();
-      let tag2 = el2.find();
-      let finalParent1 = el1.fenceMap.get(tag1);
-      let finalParent2 = el2.fenceMap.get(tag2);
-      if (tag1 === tag2) {
-        return;
-      } else if (finalParent1 && finalParent2) {
-        if (finalParent1.size > finalParent2.size) {
-          finalParent2.parent = finalParent1;
-          finalParent1.size += finalParent2.size;
-        } else {
-          finalParent1.parent = finalParent2;
-          finalParent2.size += finalParent1.size;
-        }
-      }
-    }
-  }
-
   const nodeMap = generateRegions();
 
   let checkedSet = new Set<string>();
@@ -236,11 +146,14 @@ function partTwo() {
   console.log(priceTotal);
 
   function getNumberOfFences(fenceCoordinates: [number, number][]) {
-    const fenceMap = new Map<string, UnionFind2>();
+    const fenceMap = new Map<string, UnionFind>();
     for (let i = 0; i < fenceCoordinates.length; i++) {
       fenceMap.set(
         `${fenceCoordinates[i][0]}|${fenceCoordinates[i][1]}`,
-        new UnionFind2(fenceCoordinates[i][0], fenceCoordinates[i][1], fenceMap)
+        new UnionFind(
+          fenceMap,
+          `${fenceCoordinates[i][0]}|${fenceCoordinates[i][1]}`
+        )
       );
     }
     let totalFences = 0;
@@ -284,7 +197,7 @@ function partTwo() {
             (directions[d][1] === 0 &&
               Math.floor(otherCoordinateY) !== otherCoordinateY))
         ) {
-          UnionFind2.union(thisFence, otherFence);
+          UnionFind.union(thisFence, otherFence);
         }
       }
     }

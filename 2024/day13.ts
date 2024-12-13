@@ -33,7 +33,6 @@ function partOne() {
           numberOfA * buttonAY + numberOfB * buttonBY === targetY
         ) {
           currentMinimumCost = Math.min(currentMinimumCost, newCost);
-          console.log(numberOfA, numberOfB);
         }
       }
     }
@@ -70,4 +69,6 @@ function partTwo() {
   }
   console.log(total);
 }
+
+partOne();
 partTwo();
