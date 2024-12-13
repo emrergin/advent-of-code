@@ -256,7 +256,6 @@ function partTwo() {
         let otherFence = fenceMap.get(
           `${otherCoordinateX}|${otherCoordinateY}`
         );
-        let skip = false;
         let prevDirection = (d - 1 + 4) % 4;
         let nextDirection = (d + 1) % 4;
 
