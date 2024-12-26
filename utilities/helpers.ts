@@ -40,9 +40,9 @@ export class UnionFind {
   }
 
   find() {
-    let currentNode = this;
+    let currentNode: UnionFind = this;
     while (currentNode.parent) {
-      currentNode = currentNode.parent as any;
+      currentNode = currentNode.parent;
     }
     return currentNode.name;
   }
@@ -63,5 +63,9 @@ export class UnionFind {
         finalParent2.size += finalParent1.size;
       }
     }
+  }
+
+  get grandParent() {
+    return this.nodeMap.get(this.find());
   }
 }
