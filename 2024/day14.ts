@@ -73,7 +73,6 @@ function generateRobotsFromCommands() {
     );
   }
 
-  // console.log(allRobots);
   return allRobots;
 }
 
