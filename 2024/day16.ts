@@ -15,23 +15,29 @@ class Vertex {
   y: number;
   direction: "^" | "v" | "<" | ">";
   explored: boolean;
+  explored2: boolean;
   neighbours: Vertex[];
+  reverseNeighbours: Vertex[];
   distance: number;
   name: string;
   static gridMap: Map<string, Vertex>;
+  distance2: number;
 
   constructor(x: number, y: number, direction: "^" | "v" | "<" | ">") {
     this.x = x;
     this.y = y;
     this.explored = false;
+    this.explored2 = false;
     this.direction = direction;
     this.neighbours = [];
+    this.reverseNeighbours = [];
     this.distance = Infinity;
     this.name = `${direction}|${x}|${y}`;
     if (!Vertex.gridMap) {
       Vertex.gridMap = new Map<string, Vertex>();
     }
     Vertex.gridMap.set(this.name, this);
+    this.distance2 = Infinity;
   }
 }
 
@@ -73,9 +79,17 @@ for (let i = 0; i < input.length; i++) {
       let neighbour3 = Vertex.gridMap.get(
         `${drs[k]}|${j + directions[drs[k]][0]}|${i + directions[drs[k]][1]}`
       );
+      let neighbour4 = Vertex.gridMap.get(
+        `${drs[k]}|${j - directions[drs[k]][0]}|${i - directions[drs[k]][1]}`
+      );
       currentVertex.neighbours = [neighbour3, neighbour1, neighbour2].filter(
         (a) => a !== undefined
       );
+      currentVertex.reverseNeighbours = [
+        neighbour4,
+        neighbour2,
+        neighbour1,
+      ].filter((a) => a !== undefined);
     }
   }
 }
@@ -111,14 +125,70 @@ while (currentEdges.length > 0) {
   ].filter((n) => !n.end.explored && n.start.explored);
 }
 
-console.log(
-  Math.min(
-    Vertex.gridMap.get(`^|${endX}|${endY}`)?.distance || Infinity,
-    Vertex.gridMap.get(`v|${endX}|${endY}`)?.distance || Infinity,
-    Vertex.gridMap.get(`<|${endX}|${endY}`)?.distance || Infinity,
-    Vertex.gridMap.get(`>|${endX}|${endY}`)?.distance || Infinity
-  )
+const finalDistance = Math.min(
+  Vertex.gridMap.get(`^|${endX}|${endY}`)?.distance || Infinity,
+  Vertex.gridMap.get(`v|${endX}|${endY}`)?.distance || Infinity,
+  Vertex.gridMap.get(`<|${endX}|${endY}`)?.distance || Infinity,
+  Vertex.gridMap.get(`>|${endX}|${endY}`)?.distance || Infinity
 );
+
+let arrivingDirection = -1;
+for (let i = 0; i < 4; i++) {
+  if (
+    Vertex.gridMap.get(`${drs[i]}|${endX}|${endY}`)?.distance === finalDistance
+  ) {
+    arrivingDirection = i;
+    break;
+  }
+}
+
+const endingVertex = Vertex.gridMap.get(
+  `${drs[arrivingDirection]}|${endX}|${endY}`
+) as Vertex;
+endingVertex.distance2 = 0;
+endingVertex.explored2 = true;
+
+currentEdges = endingVertex.reverseNeighbours.map((e) => ({
+  cost: getCost(endingVertex, e),
+  end: e,
+  start: endingVertex,
+}));
+
+while (currentEdges.length > 0) {
+  currentEdges.sort((a, b) => a.cost - b.cost);
+  let nextEdge = currentEdges[0];
+
+  let nextVertex = nextEdge.end;
+  let currentVertex = nextEdge.start;
+
+  nextVertex.explored2 = true;
+  nextVertex.distance2 =
+    currentVertex.distance2 + getCost(nextVertex, currentVertex);
+
+  currentEdges = [
+    ...currentEdges,
+    ...nextVertex.reverseNeighbours.map((e) => ({
+      cost: getCost(nextVertex, e) + nextVertex.distance2,
+      end: e,
+      start: nextVertex,
+    })),
+  ].filter((n) => !n.end.explored2 && n.start.explored2);
+}
+
+let nicePlaces = new Set<string>();
+let count = 0;
+for (let [, value] of Vertex.gridMap) {
+  if (
+    value.distance2 + value.distance === finalDistance &&
+    !nicePlaces.has(`${value.x}|${value.y}`)
+  ) {
+    nicePlaces.add(`${value.x}|${value.y}`);
+    count++;
+  }
+}
+
+console.log(count);
+console.log(finalDistance);
 
 function getCost(v1: Vertex, v2: Vertex) {
   if (v1.x === v2.x && v1.y === v2.y) {
