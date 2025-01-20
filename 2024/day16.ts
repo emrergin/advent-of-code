@@ -94,36 +94,7 @@ for (let i = 0; i < input.length; i++) {
   }
 }
 
-const startingVertex = Vertex.gridMap.get(`>|${startX}|${startY}`) as Vertex;
-startingVertex.distance = 0;
-startingVertex.explored = true;
-
-let currentEdges = startingVertex.neighbours.map((e) => ({
-  cost: getCost(startingVertex, e),
-  end: e,
-  start: startingVertex,
-}));
-
-while (currentEdges.length > 0) {
-  currentEdges.sort((a, b) => a.cost - b.cost);
-  let nextEdge = currentEdges[0];
-
-  let nextVertex = nextEdge.end;
-  let currentVertex = nextEdge.start;
-
-  nextVertex.explored = true;
-  nextVertex.distance =
-    currentVertex.distance + getCost(nextVertex, currentVertex);
-
-  currentEdges = [
-    ...currentEdges,
-    ...nextVertex.neighbours.map((e) => ({
-      cost: getCost(nextVertex, e) + nextVertex.distance,
-      end: e,
-      start: nextVertex,
-    })),
-  ].filter((n) => !n.end.explored && n.start.explored);
-}
+dijkstra(`>|${startX}|${startY}`, "neighbours", "distance", "explored");
 
 const finalDistance = Math.min(
   Vertex.gridMap.get(`^|${endX}|${endY}`)?.distance || Infinity,
@@ -142,38 +113,12 @@ for (let i = 0; i < 4; i++) {
   }
 }
 
-const endingVertex = Vertex.gridMap.get(
-  `${drs[arrivingDirection]}|${endX}|${endY}`
-) as Vertex;
-endingVertex.distance2 = 0;
-endingVertex.explored2 = true;
-
-currentEdges = endingVertex.reverseNeighbours.map((e) => ({
-  cost: getCost(endingVertex, e),
-  end: e,
-  start: endingVertex,
-}));
-
-while (currentEdges.length > 0) {
-  currentEdges.sort((a, b) => a.cost - b.cost);
-  let nextEdge = currentEdges[0];
-
-  let nextVertex = nextEdge.end;
-  let currentVertex = nextEdge.start;
-
-  nextVertex.explored2 = true;
-  nextVertex.distance2 =
-    currentVertex.distance2 + getCost(nextVertex, currentVertex);
-
-  currentEdges = [
-    ...currentEdges,
-    ...nextVertex.reverseNeighbours.map((e) => ({
-      cost: getCost(nextVertex, e) + nextVertex.distance2,
-      end: e,
-      start: nextVertex,
-    })),
-  ].filter((n) => !n.end.explored2 && n.start.explored2);
-}
+dijkstra(
+  `${drs[arrivingDirection]}|${endX}|${endY}`,
+  "reverseNeighbours",
+  "distance2",
+  "explored2"
+);
 
 let nicePlaces = new Set<string>();
 let count = 0;
@@ -187,13 +132,51 @@ for (let [, value] of Vertex.gridMap) {
   }
 }
 
-console.log(count);
 console.log(finalDistance);
+console.log(count);
 
-function getCost(v1: Vertex, v2: Vertex) {
-  if (v1.x === v2.x && v1.y === v2.y) {
-    return 1000;
-  } else {
-    return 1;
+function dijkstra(
+  startingCellName: string,
+  neighborName: "neighbours" | "reverseNeighbours",
+  distanceName: "distance" | "distance2",
+  exploredName: "explored" | "explored2"
+) {
+  const firstVertex = Vertex.gridMap.get(startingCellName) as Vertex;
+  firstVertex[distanceName] = 0;
+  firstVertex[exploredName] = true;
+
+  let currentEdges = firstVertex[neighborName].map((e) => ({
+    cost: getCost(firstVertex, e),
+    end: e,
+    start: firstVertex,
+  }));
+
+  while (currentEdges.length > 0) {
+    currentEdges.sort((a, b) => a.cost - b.cost);
+    let nextEdge = currentEdges[0];
+
+    let nextVertex = nextEdge.end;
+    let currentVertex = nextEdge.start;
+
+    nextVertex[exploredName] = true;
+    nextVertex[distanceName] =
+      currentVertex[distanceName] + getCost(nextVertex, currentVertex);
+
+    currentEdges = [
+      ...currentEdges,
+      ...nextVertex[neighborName].map((e) => ({
+        cost: getCost(nextVertex, e) + nextVertex[distanceName],
+        end: e,
+        start: nextVertex,
+      })),
+    ].filter((n) => !n.end[exploredName] && n.start[exploredName]);
+  }
+
+  function getCost(v1: Vertex, v2: Vertex) {
+    if (v1.x === v2.x && v1.y === v2.y) {
+      return 1000;
+    } else {
+      return 1;
+    }
   }
 }
