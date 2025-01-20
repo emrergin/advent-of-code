@@ -29,8 +29,8 @@ function aCycle(a: number) {
   }
 }
 
-function getAForNumber(a: number, t: number) {
-  let aa = a;
+function getAForNumber(t: number) {
+  let aa = 1;
   while (true) {
     if (aCycle(aa) === t) {
       break;
@@ -68,12 +68,13 @@ function checkNumber(aa: number, k: number) {
 }
 
 function partTwo() {
-  let nextStepCandidates = [getAForNumber(1, program[program.length - 1])];
+  let nextStepCandidates = [getAForNumber(program[program.length - 1])];
   let k = 1;
 
   while (k < 16) {
-    nextStepCandidates = nextStepCandidates.flatMap((a) => generateArray(a));
-    nextStepCandidates = nextStepCandidates.filter((a) => checkNumber(a, k));
+    nextStepCandidates = nextStepCandidates
+      .flatMap((a) => generateArray(a))
+      .filter((a) => checkNumber(a, k));
     k++;
   }
 

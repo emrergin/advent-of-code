@@ -137,9 +137,9 @@ console.log(count);
 
 function dijkstra(
   startingCellName: string,
-  neighborName: "neighbours" | "reverseNeighbours",
-  distanceName: "distance" | "distance2",
-  exploredName: "explored" | "explored2"
+  neighborName: "neighbours" | "reverseNeighbours" = "neighbours",
+  distanceName: "distance" | "distance2" = "distance",
+  exploredName: "explored" | "explored2" = "explored"
 ) {
   const firstVertex = Vertex.gridMap.get(startingCellName) as Vertex;
   firstVertex[distanceName] = 0;
