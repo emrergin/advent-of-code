@@ -37,50 +37,50 @@ class Vertex {
   }
 }
 
+let startingX = -1;
+let startingY = -1;
+let endX = -1;
+let endY = -1;
+
+for (let i = 0; i < input.length; i++) {
+  for (let j = 0; j < input[0].length; j++) {
+    new Vertex(j, i, input[i][j] === "#" ? "wall" : "space");
+    if (input[i][j] === "S") {
+      startingX = j;
+      startingY = i;
+    }
+    if (input[i][j] === "E") {
+      endX = j;
+      endY = i;
+    }
+  }
+}
+
+const drs: ("^" | "v" | "<" | ">")[] = ["^", ">", "v", "<"];
+for (let i = 0; i < input.length; i++) {
+  for (let j = 0; j < input[0].length; j++) {
+    for (let k = 0; k < 4; k++) {
+      let currentVertex = Vertex.gridMap.get(`${j}|${i}`);
+      if (!currentVertex) {
+        continue;
+      }
+      let neighbour = Vertex.gridMap.get(
+        `${j + directions[drs[k]][0]}|${i + directions[drs[k]][1]}`
+      );
+
+      if (neighbour) {
+        currentVertex.neighbours.push(neighbour);
+      }
+      if (neighbour?.type === "space") {
+        currentVertex.nonWallNeighbours.push(neighbour);
+      }
+    }
+  }
+}
+
+dijkstra(`${startingX}|${startingY}`);
+
 function partOne() {
-  let startingX = -1;
-  let startingY = -1;
-  let endX = -1;
-  let endY = -1;
-
-  for (let i = 0; i < input.length; i++) {
-    for (let j = 0; j < input[0].length; j++) {
-      new Vertex(j, i, input[i][j] === "#" ? "wall" : "space");
-      if (input[i][j] === "S") {
-        startingX = j;
-        startingY = i;
-      }
-      if (input[i][j] === "E") {
-        endX = j;
-        endY = i;
-      }
-    }
-  }
-
-  const drs: ("^" | "v" | "<" | ">")[] = ["^", ">", "v", "<"];
-  for (let i = 0; i < input.length; i++) {
-    for (let j = 0; j < input[0].length; j++) {
-      for (let k = 0; k < 4; k++) {
-        let currentVertex = Vertex.gridMap.get(`${j}|${i}`);
-        if (!currentVertex) {
-          continue;
-        }
-        let neighbour = Vertex.gridMap.get(
-          `${j + directions[drs[k]][0]}|${i + directions[drs[k]][1]}`
-        );
-
-        if (neighbour) {
-          currentVertex.neighbours.push(neighbour);
-        }
-        if (neighbour?.type === "space") {
-          currentVertex.nonWallNeighbours.push(neighbour);
-        }
-      }
-    }
-  }
-
-  dijkstra(`${startingX}|${startingY}`);
-
   let goodCheats = 0;
   outer: for (let [, value] of Vertex.gridMap) {
     if (value.type === "wall" && value.nonWallNeighbours.length > 1) {
@@ -99,6 +99,32 @@ function partOne() {
             }
           }
         }
+      }
+    }
+  }
+  console.log(goodCheats);
+}
+
+function partTwo() {
+  let goodCheats = 0;
+  for (let [, vertex1] of Vertex.gridMap) {
+    for (let [, vertex2] of Vertex.gridMap) {
+      if (
+        vertex1.name === vertex2.name ||
+        vertex1.type === "wall" ||
+        vertex2.type === "wall" ||
+        Math.abs(vertex1.x - vertex2.x) + Math.abs(vertex1.y - vertex2.y) > 20
+      ) {
+        continue;
+      }
+
+      let dist =
+        vertex1.distance -
+        vertex2.distance -
+        (Math.abs(vertex1.x - vertex2.x) + Math.abs(vertex1.y - vertex2.y));
+      if (dist >= 100) {
+        goodCheats++;
+        continue;
       }
     }
   }
@@ -136,3 +162,5 @@ function dijkstra(startingCellName: string) {
     ].filter((n) => !n.end.explored && n.start.explored);
   }
 }
+
+partTwo();
