@@ -11,11 +11,12 @@ namespace _2025
     {
         public static string ReadLine(int day)
         {
+            string dayPadded = day.ToString("00");
             string? line = null;
             try
             {
                 //Pass the file path and file name to the StreamReader constructor
-                StreamReader sr = new("./day"+day+"/input.txt");
+                StreamReader sr = new("./day"+ dayPadded + "/input.txt");
                 line = sr.ReadLine();
 
                 //close the file

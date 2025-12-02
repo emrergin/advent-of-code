@@ -1,2 +1,2 @@
 ﻿
-_2025.day01.Part2.Solve();
+_2025.day02.Part2.Solve();
