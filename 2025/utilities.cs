@@ -61,7 +61,8 @@ namespace _2025
 
         public static string[][] ReadArrayOfStrings(int day)
         {
-            string[] lines = File.ReadAllLines("./day" + day + "/input.txt");
+            string dayPadded = day.ToString("00");
+            string[] lines = File.ReadAllLines("./day" + dayPadded + "/input.txt");
             string[][] lines2 = Array.ConvertAll(lines, line => line.Split());
             return lines2;
         }
