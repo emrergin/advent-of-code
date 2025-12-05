@@ -1,1 +1,1 @@
-﻿_2025.day04.Part2.Solve();
+﻿_2025.day05.Part2.Solve();
