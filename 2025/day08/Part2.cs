@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using static _2025.day08.Part1;
 
 
@@ -27,14 +26,13 @@ namespace _2025.day08
                 Point.Union(p1, p2);
                 lastX1 = p1.x;
                 lastX2 = p2.x;
-                if (allNodes.Values.Where(a => a.parent == null).ToArray().Length == 1)
+                if (p1.parent?.size == allNodes.Count || p2.parent?.size== allNodes.Count)
                 {
                     break;
                 }
             }
 
             Console.WriteLine(lastX1 * lastX2);
-
         }
        
     }
