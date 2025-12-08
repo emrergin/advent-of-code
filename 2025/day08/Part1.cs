@@ -29,14 +29,13 @@ namespace _2025.day08
             int[] values = [.. allNodes.Values.Where(a=>a.parent==null).Select(a => a.size)];
             Array.Sort(values);
 
-            Console.WriteLine(values[values.Length-1] * values[values.Length - 2] * values[values.Length - 3]);
+            Console.WriteLine(values[^1] * values[^2] * values[^3]);
 
         }
         public static void ParseNodes()
         {
             string[] lines = Utilities.ReadListOfStrings(8);
             long[][] lines2 = Array.ConvertAll(lines, line => Array.ConvertAll(line.Split(","), long.Parse));
-
 
             for (int i = 0; i < lines2.Length; i++)
             {
@@ -69,19 +68,11 @@ namespace _2025.day08
             return Math.Sqrt((P1.x - P2.x)* (P1.x - P2.x) + (P1.y - P2.y) * (P1.y - P2.y) + (P1.z - P2.z) * (P1.z - P2.z));
         }
 
-        public class Point: DataStructures.UnionFind
+        public class Point(string tag, long x, long y, long z) : DataStructures.UnionFind(tag)
         {
-            public long x;
-            public long y;
-            public long z;
-            public Point(string tag, long x, long y, long z)
-        : base(tag)
-            {
-                this.x = x;
-                this.y = y;
-                this.z = z;
-            }
-           
+            public long x = x;
+            public long y = y;
+            public long z = z;
         }
     }
 }
